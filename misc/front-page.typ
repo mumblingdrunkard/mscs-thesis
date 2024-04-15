@@ -1,4 +1,4 @@
-#import "utils/latex-sizes.typ" as tex-size
+#import "../utils/latex-sizes.typ" as tex-size
 #import "config.typ" as config
 
 #set page(header: none, footer: none)
@@ -6,7 +6,7 @@
 #pagebreak(weak: true)
 #align(center, {
   v(4.5em)
-  image("images/ntnu-logo-norsk-m-visjon.svg", width: 40%)
+  image("../images/ntnu-logo-norsk-m-visjon.svg", width: 40%)
   v(1cm, weak: true)
   smallcaps(tex-size.LARGE([Department of ] + config.department))
   v(1.5cm, weak: true)

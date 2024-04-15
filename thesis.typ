@@ -4,7 +4,7 @@
 
 #show: setup.setup
 
-#include "front-page.typ"
+#include "misc/front-page.typ"
 
 #pagebreak()
 #set page(numbering: "i")
