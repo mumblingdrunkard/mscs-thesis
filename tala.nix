@@ -13,9 +13,8 @@ stdenv.mkDerivation rec {
     sha256 = "08n8y1k2h2ncrgwvklja58zhizmsdw018k8jqhvi1qbkp4qcjmk6";
   };
 
-  phases = [ "installPhase" ];
-
   nativeBuildInputs = [ pkgs.installShellFiles ];
+  phases = [ "installPhase" ];
   installPhase = ''
     mkdir -p $out/bin
     cd $src
