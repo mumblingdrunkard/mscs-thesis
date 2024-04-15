@@ -13,6 +13,8 @@ Hello, World
 ````
 )
 
+#figure(caption: "Core Overview", image("./diagrams/cpu.svg"))
+
 === Hello
 
 Hello again, I'm a skeleton
