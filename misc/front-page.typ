@@ -1,4 +1,4 @@
-#import "../utils/latex-sizes.typ" as tex-size
+#import "../utils/latex.typ" as latex
 #import "config.typ" as config
 
 #set page(header: none, footer: none)
@@ -8,20 +8,20 @@
   v(4.5em)
   image("../images/ntnu-logo-norsk-m-visjon.svg", width: 40%)
   v(1cm, weak: true)
-  smallcaps(tex-size.LARGE([Department of ] + config.department))
+  smallcaps((latex.size.LARGE)([Department of ] + config.department))
   v(1.5cm, weak: true)
-  smallcaps(tex-size.Large(config.course.code + [ -- ] + config.course.name))
+  smallcaps((latex.size.Large)(config.course.code + [ -- ] + config.course.name))
   v(.4cm, weak: true)
   v(2em)
   v(.6cm, weak: true)
   line(length: 150mm, stroke: .5mm)
   v(.4cm, weak: true)
-  tex-size.huge(text(weight: "bold", config.project.name))
+  (latex.size.huge)(text(weight: "bold", config.project.name))
   v(.8cm, weak: true)
   line(length: 150mm, stroke: .5mm)
   v(1.7cm, weak: true)
 
-  tex-size.large(
+  (latex.size.large)(
     {
       emph(if (config.authors.len() > 1) { "Authors:" } else { "Author:" })
       table(columns: (1fr,)*2, stroke: none, 

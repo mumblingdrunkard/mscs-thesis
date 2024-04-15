@@ -1,6 +1,5 @@
 #import "utils/acronyms.typ" as acronyms
 #import "utils/setup.typ" as setup
-#import "utils/latex-sizes.typ" as tex
 
 #show: setup.setup
 
@@ -27,3 +26,4 @@
   include("02-background/index.typ")
   include("03-architecture/index.typ")
 }
+
