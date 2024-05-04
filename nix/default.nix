@@ -3,13 +3,13 @@ let
   typst = pkgs.typst;
   lib = pkgs.lib;
   d2 = pkgs.d2;
-  tala = import ./nix/tala.nix { inherit pkgs system; };
+  tala = import ./tala.nix { inherit pkgs system; };
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "mscs-thesis";
   version = "0.1.0";
   
-  src = lib.sources.cleanSource ./src;
+  src = lib.sources.cleanSource ../src;
   buildInputs = [ typst d2 tala ];
 
   buildPhase = ''
