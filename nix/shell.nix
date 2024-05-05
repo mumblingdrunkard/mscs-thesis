@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { }, system }:
+{ pkgs, system }:
 let
   d2 = pkgs.d2;
   tala = import ./tala.nix { inherit pkgs system; };

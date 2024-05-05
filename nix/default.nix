@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { }, system }:
+{ pkgs, system }:
 let
   typst = pkgs.typst;
   lib = pkgs.lib;
