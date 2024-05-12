@@ -10,7 +10,7 @@
       pkgsFor = nixpkgs.legacyPackages;
     in {
       packages = forAllSystems (system: {
-        default = pkgsFor.${system}.callPackage ./nix/default.nix { inherit system; };
+        default = pkgsFor.${system}.callPackage ./nix/default.nix { };
       });
 
       devShells = forAllSystems (system: {
