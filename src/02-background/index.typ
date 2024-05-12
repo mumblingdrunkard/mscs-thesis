@@ -1,4 +1,4 @@
-= Example Section
+= Background
 
 In physics, the Navier-Stokes equations, named after Claude-Louis Navier and George Gabriel Stokes, describe the motion of viscous fluid substances.
 

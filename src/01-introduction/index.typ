@@ -1,15 +1,7 @@
 = Introduction
 
-Hi!
-Welcome to this LaTeX-template.
-I will here aim to introduce you to, as well as motivate you to learn more about the features available in LaTeX through Overleaf.
-Many of the features you will come across in this template are not necessarily relevant to you at this point in time, and some will most likely seem way too advanced.
-However, keep in mind that you are not expected to understand everything at once either.
-
-I hope that you, with the assistance of what I provide you with here, are able to make your own LaTeX-templates containing your personal preferences.
-You may do it by directly changing variables in this template, or you may create a brand new containing only carefully selected features of your own.
-
-As a final note, I want to wish you the best of luck learning LaTeX, but do keep in mind that this template is only scratching the surface.
+> With great speculation, comes great speculative execution security vulnerability.
+> --- Someone's uncle, I'm sure.
 
 #{
   include("00-example.typ")
