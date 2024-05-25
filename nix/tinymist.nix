@@ -8,7 +8,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "tinymist";
-  version = "0.11.8";
+  version = "0.11.9";
 
   src = builtins.fetchurl {
     url = "https://github.com/Myriad-Dreamin/tinymist/releases/download/v${version}/tinymist-${tinymist-system}";
