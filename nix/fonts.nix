@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> { }, fetchzip }:
 let
   stdenv = pkgs.stdenv;
   lib = pkgs.lib;
@@ -8,15 +8,14 @@ stdenv.mkDerivation rec {
   version = "6.2";
 
   src = fetchzip {
-    # https://github.com/terrastruct/TALA/releases/download/v0.3.14/tala-v0.3.14-linux-amd64.tar.gz
     url = "https://github.com/tonsky/FiraCode/releases/download/${version}/Fira_Code_v${version}.zip";
-    sha256 = "08n8y1k2h2ncrgwvklja58zhizmsdw018k8jqhvi1qbkp4qcjmk6";
+    sha256 = "UHOwZL9WpCHk6vZaqI/XfkZogKgycs5lWg1p0XdQt0A=";
+    stripRoot = false;
   };
 
-  phases = [ "installPhase" ];
   installPhase = ''
-    mkdir -p $out/fonts
-    cp -r src/ttf $out/ttf
+    mkdir -p $out/ttf
+    cp -r ttf $out/
   '';
 
   meta = with lib; {

@@ -1,9 +1,8 @@
 #import "../utils/latex.typ" as latex
-#import "config.typ" as config
+#import "../utils/config.typ" as config
 
 #set page(header: none, footer: none)
 
-#pagebreak(weak: true)
 #align(center, {
   v(4.5em)
   image("../images/ntnu-logo-norsk-m-visjon.svg", width: 40%)
@@ -36,4 +35,3 @@
   place(bottom + center, [#datetime.today().display()])
 })
 
-#pagebreak(weak: true)

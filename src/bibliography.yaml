@@ -1,0 +1,395 @@
+bib:doppelganger:
+  type: article
+  title: "Doppelganger Loads: A Safe, Complexity-Effective Optimization for Secure Speculation Schemes"
+  author: 
+  - Kvalsvik, Amund Bergland
+  - Aimoniotis, Pavlos
+  - Kaxiras, Stefanos
+  - Sjalander, Magnus
+  date: 2023-06-17
+  #publisher: "Association for Computing Machinery"
+  archive: "ACM Digital Library"
+  url: "https://doi.org/10.1145/3579371.3589088"
+  doi: "10.1145/3579371.3589088"
+  volume: 53
+  parent:
+    type: proceedings
+    title: "ISCA '23: Proceedings of the 50th Annual International Symposium on Computer Architecture"
+    publisher: "Association for Computing Machinery"
+    archive: "ACM Digital Library"
+
+bib:kvalsvik-thesis:
+  type: thesis
+  title: "Investigating the Usefulness of Simulators and Prototypes as Research Tools"
+  author:
+    - Kvalsvik, Amund Bergland
+  date: 2021
+  archive: "NTNU Open"
+  url: "https://hdl.handle.net/11250/2833643"
+
+bib:nodland-paper:
+  type: article
+  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine"
+  subtitle: "TDT4501 --- Computer Science, Specialization Project"
+  author:
+    - Nodland, Elias
+  date: 2023-12
+    
+bib:rfp:
+  type: article
+  title: "Register file prefetching"
+  author: 
+    - Shukla, Sudhanshu 
+    - Bandishte, Sumeet
+    - Gaur, Jayesh
+    - Subramoney, Sreenivas
+  publisher: "Association for Computing Machinery"
+  archive: "ACM Digital Library"
+  date: 2022-06-11
+  page-range: 410-423
+  doi: "10.1145/3470496"
+  url: "https://doi.org/10.1145/3470496"
+  parent:
+    type: proceedings
+    title: "ISCA '22: Proceedings of the 49th Annual International Symposium on Computer Architecture"
+    publisher: "Association for Computing Machinery"
+
+bib:riscv:
+  type: book
+  title: The RISC-V Instruction Set Manual
+  volume: "I: User-Level ISA"
+  edition: Document Version 2.2
+  editor: 
+    - Waterman, Andrew
+    - Asanović, Krste
+  publisher: RISC-V Foundation
+  date: 2017-05
+
+bib:riscv-privileged:
+  type: book
+  title: The RISC-V Instruction Set Manual
+  volume: "II: Privileged Architecture"
+  edition: Document Version 20211203
+  editor: 
+    - Waterman, Andrew
+    - Asanović, Krste
+    - Hauser, John
+  publisher: RISC-V International
+  date: 2021-12
+
+bib:boom-core:
+  type: web
+  title: RISC-V BOOM
+  url:
+    date: 2023-12-05
+    value: https://boom-core.org/
+
+bib:boom-docs:
+  type: reference
+  title: RISCV-BOOM Documentation
+  author:
+    - Celio, Chris
+    - Zhao, Jerry
+    - Gonzalez, Abraham
+    - Korpan, Ben
+  date: 2021-04-08
+
+bib:chisel-paper:
+  type: article
+  title: "Chisel: Constructing Hardware in a Scala Embedded Language"
+  author:
+    - Bachrach, Jonathan
+    - Vo, Huy
+    - Richards, Brian
+    - Lee, Yunsup
+    - Waterman, Andrew
+    - Avižienis, Rimas
+    - Wawrzynek, John
+    - Asanović, Krste
+  date: 2012-06
+  page-range: 1212-1221
+  doi: 10.1145/2228360.2228584
+  parent:
+    type: proceedings
+    title: "DAC Design Automation Conference 2012"
+
+bib:chisel-web:
+  type: web
+  title: Chisel
+  url:
+    date: 2023-12-05
+    value: https://www.chisel-lang.org/
+
+bib:spectre:
+  type: article
+  title: "Spectre Attacks: Exploiting Speculative Execution"
+  author:
+    - Kocher, Paul
+    - Horn, Jann
+    - Fogh, Anders
+    - Genkin, and Daniel
+    - Gruss, Daniel
+    - Haas, Werner
+    - Hamburg, Mike
+    - Lipp, Moritz
+    - Mangard, Stefan
+    - Prescher, Thomas
+    - Schwarz, Michael
+    - Yarom, Yuval
+  date: 2019-05
+  url: 
+    value: https://spectreattack.com/spectre.pdf
+    date: 2023-12-03
+  page-range: 1-19
+  archive: "IEEE Computer Society Digital Library"
+  parent:
+    type: proceedings
+    title: "40th IEEE Symposium on Security and Privacy (S&P'19)"
+    publisher: "IEEE"
+
+bib:meltdown:
+  type: article
+  title: "Meltdown: Reading Kernel Memory from User Space"
+  author:
+    - Lipp, Moritz
+    - Schwarz, Michael
+    - Gruss, Daniel
+    - Prescher, Thomas
+    - Haas, Werner
+    - Fogh, Anders
+    - Horn, Jann
+    - Mangard, Stefan
+    - Kocher, Paul
+    - Genkin, Daniel
+    - Yarom, Yuval
+    - Hamburg, Mike
+  url: 
+    value: https://meltdownattack.com/meltdown.pdf
+    date: 2023-12-03
+  date: 2018-08
+  page-range: 973-989
+  parent:
+    type: proceedings
+    title: "27th USENIX Security Symposium (USENIX Security 18)"
+    publisher: "USENIX"
+  
+
+bib:gem5:
+  type: article
+  title: "The gem5 Simulator: Version 20.0+"
+  author:
+    - Lowe-Power, Jason 
+    - Ahmad, Abdul Mutaal 
+    - Akram, Ayaz 
+    - Alian, Mohammad 
+    - Amslinger, Rico 
+    - Andreozzi, Matteo 
+    - Armejach, Adrià 
+    - Asmussen, Nils 
+    - Beckmann, Brad 
+    - Bharadwaj, Srikant 
+    - Black, Gabe 
+    - Bloom, Gedare 
+    - Bruce, Bobby R. 
+    - Carvalho, Daniel Rodrigues 
+    - Castrillon, Jeronimo 
+    - Chen, Lizhong 
+    - Derumigny, Nicolas 
+    - Diestelhorst, Stephan 
+    - Elsasser, Wendy 
+    - Escuin, Carlos 
+    - Fariborz, Marjan 
+    - Farmahini-Farahani, Amin 
+    - Fotouhi, Pouya 
+    - Gambord, Ryan 
+    - Gandhi, Jayneel 
+    - Gope, Dibakar 
+    - Grass, Thomas 
+    - Gutierrez, Anthony 
+    - Hanindhito, Bagus 
+    - Hansson, Andreas 
+    - Haria, Swapnil 
+    - Harris, Austin 
+    - Hayes, Timothy 
+    - Herrera, Adrian 
+    - Horsnell, Matthew 
+    - Jafri, Syed Ali Raza 
+    - Jagtap, Radhika 
+    - Jang, Hanhwi 
+    - Jeyapaul, Reiley 
+    - Jones, Timothy M. 
+    - Jung, Matthias 
+    - Kannoth, Subash 
+    - Khaleghzadeh, Hamidreza 
+    - Kodama, Yuetsu 
+    - Krishna, Tushar 
+    - Marinelli, Tommaso 
+    - Menard, Christian 
+    - Mondelli, Andrea 
+    - Moreto, Miquel 
+    - Mück, Tiago 
+    - Naji, Omar 
+    - Nathella, Krishnendra 
+    - Nguyen, Hoa 
+    - Nikoleris, Nikos 
+    - Olson, Lena E. 
+    - Orr, Marc 
+    - Pham, Binh 
+    - Prieto, Pablo 
+    - Reddy, Trivikram 
+    - Roelke, Alec 
+    - Samani, Mahyar 
+    - Sandberg, Andreas 
+    - Setoain, Javier 
+    - Shingarov, Boris 
+    - Sinclair, Matthew D. 
+    - Ta, Tuan 
+    - Thakur, Rahul 
+    - Travaglini, Giacomo 
+    - Upton, Michael 
+    - Vaish, Nilay 
+    - Vougioukas, Ilias 
+    - Wang, William 
+    - Wang, Zhengrong 
+    - Wehn, Norbert 
+    - Weis, Christian 
+    - Wood, David A. 
+    - Yoon, Hongil 
+    - Éder F. Zulian
+  date: 2020-07
+
+bib:nda:
+  type: article
+  title: "NDA: Preventing Speculative Execution Attacks at Their Source"
+  author:
+    - Weisse, Ofir
+    - Neal, Ian
+    - Loughlin, Kevin
+    - Wenisch, Thomas F.
+    - Kasicki, Baris
+  date: 2019-10-12
+  page-range: 572-586
+  url: https://doi.org/10.1145/3352460.3358306
+  doi: 10.1145/3352460.3358306
+  parent:
+    type: proceedings
+    title: "MICRO '52: Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture"
+    publisher: "Association for Computing Machinery"
+    archive: "ACM Digital Library"
+
+bib:stt:
+  type: article
+  title: "Speculative Taint Tracking (STT): A Comprehensive Protection for Speculatively Accessed Data"
+  author:
+    - Yu, Jiyong
+    - Yan, Mengjia
+    - Khyzha, Artem
+    - Morrison, Adam
+    - Torrellas, Josep
+    - Fletcher, Christopher W.
+  date: 2019-10-12
+  page-range: 954-968
+  url: https://doi.org/10.1145/3352460.3358274
+  doi: 10.1145/3352460.3358274
+  parent:
+    type: proceedings
+    title: "MICRO '52: Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture"
+    publisher: "Association for Computing Machinery"
+    archive: "ACM Digital Library"
+
+bib:dom:
+  type: article
+  title: Efficient Invisible Speculative Execution Through Selective Delay and Value Prediction
+  author: 
+    - Sakalis, Christos
+    - Kaxiras, Stefanos
+    - Ros, Alberto
+    - Jimborean, Alexandra
+    - Själander, Magnus
+  publisher: "Association for Computing Machinery"
+  date: 2019-06
+  page-range: 723-735
+  doi: 10.1145/3307650.3322216
+  url: https://doi.org/10.1145/3307650.3322216
+  parent:
+    type: proceedings
+    title: "ISCA '19: Proceedings of the 46th International Symposium on Computer Architecture"
+    publisher: Association for Computing Machinery
+    
+bib:scala-lang:
+  type: web
+  title: Scala
+  url:
+    date: 2023-12-05
+    value: https://www.scala-lang.org/
+
+bib:rocket-chip:
+  type: report
+  author: 
+    - Asanović, Krste
+    - Avizienis, Rimas
+    - Bachrach, Jonathan
+    - Beamer, Scott
+    - Biancolin, David
+    - Celio, Christopher
+    - Cook, Henry
+    - Dabbelt, Daniel
+    - Hauser, John
+    - Izraelevitz, Adam
+    - Karandikar, Sagar
+    - Keller, Ben
+    - Kim, Donggyu
+    - Koenig, John
+    - Lee, Yunsup
+    - Love, Eric
+    - Maas, Martin
+    - Magyar, Albert
+    - Mao, Howard
+    - Moreto, Miquel
+    - Ou, Albert
+    - Patterson, David A.
+    - Richards, Brian
+    - Schmidt, Colin
+    - Twigg, Stephen
+    - Vo, Huy
+    - Waterman, Andrew
+  title: The Rocket Chip Generator
+  url: http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html
+  date: 2016
+
+
+bib:chipyard:
+  type: article
+  author:
+    - Amid, Alon
+    - Biancolin, David
+    - Gonzalez, Abraham
+    - Grubb, Daniel
+    - Karandikar, Sagar
+    - Liew, Harrison
+    - Magyar,   Albert
+    - Mao, Howard
+    - Ou, Albert
+    - Pemberton, Nathan
+    - Rigge, Paul
+    - Schmidt, Colin
+    - Wright, John
+    - Zhao, Jerry
+    - Shao, Yakun Sophia
+    - Asanovi\'c, Krste
+    - Nikoli\'c, Borivoje
+  title: "Chipyard: Integrated Design, Simulation, and Implementation Framework for Custom SoCs"
+  date: 2020
+  volume: 40
+  page-range: 10-21
+  doi: 10.1109/MM.2020.2996616
+  parent:
+    title: "IEEE Micro"
+
+bib:verilator:
+  type: web
+  title: Veripool - Verilator
+  url: 
+    value: https://www.veripool.org/verilator/
+    date: 2023-12-03
+

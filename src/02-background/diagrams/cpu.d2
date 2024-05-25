@@ -1,0 +1,158 @@
+cpu {
+	direction: down
+
+	if: "IF"
+
+	dmem: "DMem"
+
+	lsu: "LSU" {
+		ldq: "LDQ"
+		tlb: "TLB"
+	}
+
+	core: "Core" {
+		rob: "ROB"
+		exe: "EXE" {
+			units: "Functional Units" {
+				grid-rows: 1
+				grid-columns: 7
+				grid-gap: 0
+
+				* { height: 30 }
+				* { style.bold: true }
+
+				h: "N"
+				h_mem: "Mem"
+				h_csr: "CSR"
+				h_jmp: "Jmp"
+				h_al: "AL"
+				h_mul: "Mul"
+				h_div: "Div"
+
+				f0: "0"
+				f0_mem: "Y"
+				f0_csr: ""
+				f0_jmp: ""
+				f0_al: ""
+				f0_mul: ""
+				f0_div: ""
+
+				f1: "1"
+				f1_mem: ""
+				f1_csr: ""
+				f1_jmp: "Y"
+				f1_al: "Y"
+				f1_mul: ""
+				f1_div: ""
+
+				f2: "2"
+				f2_mem: ""
+				f2_csr: "Y"
+				f2_jmp: ""
+				f2_al: "Y"
+				f2_mul: ""
+				f2_div: ""
+
+				f3: "3"
+				f3_mem: ""
+				f3_csr: ""
+				f3_jmp: ""
+				f3_al: "Y"
+				f3_mul: "Y"
+				f3_div: ""
+
+				f4: "4"
+				f4_mem: ""
+				f4_csr: ""
+				f4_jmp: ""
+				f4_al: "Y"
+				f4_mul: ""
+				f4_div: "Y"
+			}
+		}
+
+		wb: "WB"
+		intq: "Int. Q."
+		memq: "Mem. Q."
+
+		wb -> intq
+		wb -> memq
+
+		intq -> exe.units
+
+		memq -> exe.units
+
+	}
+
+	rfp: "RFP" {
+		mem: "Mem" {
+			grid-rows: 1
+			grid-columns: 3
+			grid-gap: 0
+
+			* { height: 30 }
+
+			h_prev: "Prev" {height: 50}
+			h_stride: "Stride" {height: 50}
+			h_confidence: "Confidence" {height: 50}
+
+			e0_prev: ""
+			e0_stride: "" 
+			e0_confidence: ""
+			
+			e1_prev: ""
+			e1_confidence: ""
+			e1_stride: ""
+
+			e2_prev: ""
+			e2_confidence: "" 
+			e2_stride: ""
+			
+			e3_prev: ""
+			e3_confidence: ""
+			e3_stride: ""
+
+			e4_prev: ""
+			e4_confidence: "" 
+			e4_stride: ""
+			
+			e5_prev: ""
+			e5_confidence: ""
+			e5_stride: ""
+
+			e6_prev: ""
+			e6_confidence: ""
+			e6_stride: ""
+		}
+
+		br: "Bank Read"
+		br <> mem: Bank Select
+
+		brw: "Bank Read/Write"
+		brw <> mem: Bank Select
+
+		tl: "Training Logic"
+		tl <> brw
+
+		pl: "Prediction Logic"
+		pl <> br
+	}
+
+	rfp.pl -> lsu: "Selected Prediction"
+
+	lsu -> dmem: "DMem. Req."
+	dmem -> lsu.ldq: "Predicted Value"
+
+	if -> rfp.pl: Enqueued uOPs
+
+	if -> core.intq
+	if -> core.memq
+
+	if -> core.rob: Enqueued uOPs
+
+	core.rob -> rfp.tl: Committed uOPs
+
+	lsu -> core.wb
+
+	core.exe.addrcalc -> lsu.tlb: "Addr. Gen."
+}
