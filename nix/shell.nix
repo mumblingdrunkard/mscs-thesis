@@ -7,7 +7,7 @@ pkgs.mkShell {
     (pkgs.callPackage ./default.nix { })
   ];
   buildInputs = [
-    (pkgs.callPackage ./tinymist.nix {})
+    (pkgs.callPackage ./tinymist.nix { })
   ];
   TYPST_FONT_PATHS="${fonts}/ttf";
 }

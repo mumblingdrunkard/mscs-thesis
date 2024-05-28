@@ -13,11 +13,11 @@
   v(.4cm, weak: true)
   v(2em)
   v(.6cm, weak: true)
-  line(length: 150mm, stroke: .5mm)
-  v(.4cm, weak: true)
-  (latex.size.huge)(text(weight: "bold", config.project.name))
-  v(.8cm, weak: true)
-  line(length: 150mm, stroke: .5mm)
+  line(length: 150mm, stroke: .5pt)
+  v(1cm, weak: true)
+  (latex.size.huge)(text(weight: 500, config.project.name))
+  v(1cm, weak: true)
+  line(length: 150mm, stroke: .5pt)
   v(1.7cm, weak: true)
 
   (latex.size.large)(

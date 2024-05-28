@@ -12,20 +12,13 @@ stdenv.mkDerivation rec {
 
   src = builtins.fetchurl {
     url = "https://github.com/Myriad-Dreamin/tinymist/releases/download/v${version}/tinymist-${tinymist-system}";
-    sha256 = "09qgqwyhjm0qh8nkx6spb1fmidxgdxwvnds73v9vkzk0vm2ijbd1";
+    sha256 = "15g4ijir66ql2y0njm7zp10hbl218d0v2b294ncligcz6107532f";
   };
 
-  # nativeBuildInputs = [ pkgs.installShellFiles ];
   phases = [ "installPhase" ];
   installPhase = ''
     mkdir -p $out/bin
     cp $src $out/bin/tinymist
     chmod +x $out/bin/tinymist
   '';
-
-  meta = with lib; {
-    description = "TALA Layout Engine plugin for D2";
-    homepage = "https://terrastruct.com/tala";
-    license = licenses.unfree;
-  };
 }

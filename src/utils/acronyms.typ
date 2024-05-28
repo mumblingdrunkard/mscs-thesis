@@ -1,11 +1,21 @@
 #let acronyms = (
-  CPU: "Central Processing Unit",
-  RAM: "Random Access Memory",
-  PC: "Program Counter",
-  BOOM: "Berkeley Out-of-Order Machine",
-  MLP: "Memory Level Parallelism",
-  LSU: "Load-Store Unit",
-  
+  ALU: ("ALUs?", "Arithmetic-logic unit"),
+  Assembly: ("(A|a)ssembly", "Human-readable form of machine language"),
+  BOOM: ("BOOM", "Berkeley out-of-order machine"),
+  CPU: ("CPUs?", "Central processing unit"),
+  DAG: ("DAGs?", "Directed acyclic graph"),
+  DRAM: ("DRAM", "Dynamic Random Access Memory"),
+  ILP: ("ILP", "Instruction-level parallelism"),
+  ISA: ("ISAs?", "Instruction set architecture"),
+  JAL: ("JALs?", "Jump-and link"),
+  LDQ: ("LDQs?", "Load queue"),
+  LSU: ("LSUs?", "Load-store unit"),
+  MLP: ("MLP", "Memory-level parallelism"),
+  PC: ("PCs?", "Program counter"),
+  RAM: ("RAM", "Random access memory"),
+  RTL: ("RTL", "Register-transfer level"),
+  STQ: ("STQs?", "Store queue"),
+  uOP: ("uOPs?", "Micro-operations"),
 )
 
 #let usedAcronyms = state("used", (:))
@@ -15,7 +25,7 @@
       ..usedAcronyms.final().pairs().sorted().map(((acr, uses)) => { 
         (
           [*#acr*],
-          [#acronyms.at(acr) #label("acronyms:" + acr)
+          [#acronyms.at(acr).at(1) #label("acronyms:" + acr)
           #box(repeat(" ."), width: 1fr)
           #box(width: 5pt)
           #uses.dedup(key: use => use).map(use => {
@@ -28,9 +38,9 @@
 )
 
 #let enableAcronyms(body) = {
-  for (acr, desc) in acronyms {
+  for (acr, (expr, desc)) in acronyms {
     body = {
-      let match = "\b" + acr + "s?\b"
+      let match = "\b" + expr + "\b"
       show regex(match): (it) => {
         locate(loc => {
           usedAcronyms.update(used => {

@@ -12,5 +12,5 @@
 #let department = "Computer Science"
 
 #let project = (
-  name: "Load Address Prediction in an Out-of-Order RISC-V Core"
+  name: "Doppelganger Loads in Hardware"
 )

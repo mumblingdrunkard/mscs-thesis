@@ -4,13 +4,13 @@
 #show: setup.setup
 
 #{
-  include "./01-introduction/index.typ"
-  include "./02-background/index.typ"
-  include "./03-doppelganger-loads/index.typ"
-  include "./04-architecture/index.typ"
-  include "./05-implementation/index.typ"
-  include "./06-methodology/index.typ"
-  include "./07-results/index.typ"
-  include "./08-reflection/index.typ"
-  include "./09-conclusion/index.typ"
+  include "./introduction/index.typ"
+  include "./computer-architecture-fundamentals/index.typ"
+  include "./doppelganger-loads/index.typ"
+  include "./architecture/index.typ"
+  include "./implementation/index.typ"
+  include "./methodology/index.typ"
+  include "./results/index.typ"
+  include "./reflection/index.typ"
+  include "./conclusion/index.typ"
 }

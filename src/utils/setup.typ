@@ -3,36 +3,25 @@
 
 #let setup = body => {
   set text(size: 10pt)
-  set par(justify: true, linebreaks: "optimized", leading: 0.5em, first-line-indent: 2em)
+  set par(justify: true, linebreaks: "optimized")
   
-  set page(paper: "a4", margin: (x: 30mm, top: 21mm, bottom: 21mm), number-align: bottom, header-ascent: 2em, footer-descent: 2em)
-
-  show par: set block(spacing: .5em)
+  set page(paper: "a4", margin: (x: 30mm, top: 21mm, bottom: 28mm), number-align: bottom, header-ascent: 2em, footer-descent: 2em)
 
   set page(header: {
-    // place(top + left, line(start: (0mm, 18mm), end: (150mm, 18mm), stroke: .5pt))
+    counter(footnote).update(0) 
   }, footer: {
-    // place(bottom + left, line(start: (0mm, -18mm), end: (150mm, -18mm), stroke: .5pt))
-
-    place(bottom + left, box(width: 100%, height: 18mm, {
-      align(center + top, {
+    place(bottom + left, box(width: 100%, height: 28mm, {
+      align(center + horizon, {
         locate(loc => {
           if loc.page-numbering() != none {
-            (latex.size.normalsize.with(weight: "regular"))({
+            (latex.size.normalsize)(weight: "regular", {
               numbering(loc.page-numbering(), counter(page).get().first())
             })
           }
         })
       })
     }))
-  }, )
-  
-
-  show raw.where(lang: "asciidraw"): it => {
-    set par(leading: 0.5em)
-    set text(font: "Fira Code")
-    it
-  }
+  })
 
   set figure(numbering: num => {
     // Get heading numbering at this point
@@ -43,24 +32,26 @@
     }
     numbering("1.", num)
   })
-  
-  show figure.where(kind: math.equation): set figure(numbering: num => {
-    let loc = query(selector(math.equation).after(here())).first().location()
-    let n = query(selector(heading.where(level: 1)).before(here())).last().numbering
-    [(]
-    numbering(n, counter(heading).get().first())
-    if n.last() != "." {
-      [.]
-    }
-    numbering("1", counter(math.equation).at(loc).first())
-    [)]
-  })
-  show figure.where(kind: math.equation): set figure(supplement: [])
 
-  show figure.where(kind: math.equation): it => {
-    it.body
-    align(center, it.caption.body)
-  }
+  show figure.where(kind: table): set figure.caption(position: top)
+  
+  // show figure.where(kind: math.equation): set figure(numbering: num => {
+  //   let loc = query(selector(math.equation).after(here())).first().location()
+  //   let n = query(selector(heading.where(level: 1)).before(here())).last().numbering
+  //   [(]
+  //   numbering(n, counter(heading).get().first())
+  //   if n.last() != "." {
+  //     [.]
+  //   }
+  //   numbering("1", counter(math.equation).at(loc).first())
+  //   [)]
+  // })
+  // show figure.where(kind: math.equation): set figure(supplement: [])
+
+  // show figure.where(kind: math.equation): it => {
+  //   it.body
+  //   align(center, it.caption.body)
+  // }
   
   set math.equation(numbering: num => {
     // Get heading numbering at this point
@@ -84,7 +75,7 @@
     link(it.element.location(), {
       if it.element.func() == heading and it.level == 1 {
         v(1em, weak: true)
-        set text(weight: "bold", size: 12pt)
+        set text(weight: 500, size: 12pt)
         it.body
         box(width: 1fr)
         text(size: 10pt, it.page)
@@ -104,28 +95,61 @@
   }
 
   show heading: set par(first-line-indent: 0pt)
+  show heading: set text(weight: 550)
+  // show heading: it => {
+  //   if it.numbering != none {
+  //     numbering(it.numbering, ..counter(heading).at(it.location()))
+  //     [ ]
+  //   }
+  //   underline(it.body)
+  // }
+
+  set figure(placement: auto)
+
+  show ref: it => {
+    let el = it.element
+    if el != none and el.func() == figure {
+      set text(weight: "black")
+      it
+    } else {
+      it
+    }
+  }
+
+  show heading: it => {
+    block(breakable: false, {
+      if it.numbering != none {
+        numbering(it.numbering, ..counter(heading).at(it.location()))
+        [ ]
+      }
+      show text: underline
+      it.body
+    })
+  }
+
   show heading.where(level: 1): it => {
     pagebreak(to: "odd", weak: true)
-    sym.zws
-    counter(figure.where(kind: image)).update(0)
-    counter(figure.where(kind: raw)).update(0)
-    counter(figure.where(kind: table)).update(0)
-    counter(math.equation).update(0)
-    v(5.7em)
-    locate(loc => {
-      if it.numbering != none {
-        counter(heading.where(level: 1)).display(me => {
-          (latex.size.huge)({
-            [Chapter ]
-            numbering("1", me)
+    block(breakable: false, {
+      counter(figure.where(kind: image)).update(0)
+      counter(figure.where(kind: raw)).update(0)
+      counter(figure.where(kind: table)).update(0)
+      counter(math.equation).update(0)
+      v(3em)
+      locate(loc => {
+        if it.numbering != none {
+          counter(heading.where(level: 1)).display(me => {
+            text(size: 48pt, {
+              numbering("1.", me)
+            })
           })
-        })
-      }
-      {
-        v(2.7em, weak: true)
-        (latex.size.Huge)(it.body)
-        v(2em, weak: true)
-      }
+        }
+        {
+          linebreak()
+          // v(2.7em, weak: true)
+          (latex.size.Huge)(it.body)
+          v(1em)
+        }
+      })
     })
   }
 
@@ -133,20 +157,29 @@
   show heading.where(level: 3): set text(size: 12pt)
   show heading.where(level: 4): set heading(numbering: none)
 
-  show heading: it => {
-    v(weak: true, 2.65em)
-    it
-    v(weak: true, 1.75em)
-  }
-
   set heading(numbering: none, outlined: false)
-
   include "../frontmatter/front-page.typ"
 
   set page(paper: "a4", margin: (inside: 36mm, outside: 24mm))
 
   set page(numbering: "i")
   counter(page).update(1)
+
+  set table(stroke: none, fill: (x, y) => {
+    if y.bit-and(1) != 1 {
+      silver.lighten(60%)
+    } else {
+      white
+    }
+  })
+
+  show raw: set text(font: "DejaVu Sans Mono", size: 8pt)
+
+  // Ascii figures
+  show raw.where(lang: "asciidraw"): it => {
+    set par(leading: 0.4em)
+    it
+  }
 
   include "../frontmatter/abstract.typ"
   include "../frontmatter/acknowledgements.typ"
