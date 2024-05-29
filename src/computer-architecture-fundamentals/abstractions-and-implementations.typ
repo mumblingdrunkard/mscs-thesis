@@ -1,10 +1,5 @@
 == Abstractions and Implementations
 
-This section covers a short introduction to how boolean logic works within a computer to construct various functional components.
-The last two subsections cover the essentials of a minimal instruction set for a computer, and shows how such an instruction set might be implemented in practice.
-
-=== Turtles All the Way Down
-
 Everything is an _abstraction_.
 There are multiple layers of abstraction.
 There are contracts between those layers, specifying a common language that the layer above speaks, and that the layer below understands.
@@ -30,7 +25,7 @@ It is an electrical switch that can be flipped using electricity.
 By using clever organisations of transistors, it is possible to express boolean logic.
 
 Boolean logic concerns itself with two values: true and false, 1 and 0, yes and no, on and off, high and low.
-Because individual transistors are hard to work with and don't look pretty in diagrams, they are grouped together to form basic _logic gates_ and the group is replaced by an appropriate symbol.
+Because individual transistors are hard to work with and do not look pretty in diagrams, they are grouped together to form basic _logic gates_ and the group is replaced by an appropriate symbol.
 This is an abstraction to more easily focus on the logic and not the physical implementation, though it is still a simple mapping to do.
 
 A logic gate has one or more inputs and outputs.
@@ -267,13 +262,13 @@ The components are as follows:
 - `OP1` and `OP2`, the source operands of the
 - `ALU`, the _arithmetic-logic unit_, and
 - `PC`, the program counter.
-- Finally, there the control logic `CTRL`.
+- Finally, the control logic: `CTRL`.
 
 Not shown are the connections from `CTRL` to all of the other components control signals.
 
 The solid arrowheads indicate that there is always a connection.
 The unfilled arrowheads indicate that the connection is optional.
-Because this architecture uses a shared bus, components must be able to not give an output to prevent interferring with the values on the bus.
+Because this architecture uses a shared bus, components must be able disconnect their outputs from the bus to prevent interferring with values from other components.
 
 ==== Control Signals
 
@@ -316,8 +311,8 @@ Just like the language standard does not specify which machine instructions shou
 
 Herein lies the distinction between the ISA and what is called _microarchitecture_.
 For an ISA, the basic unit of a program is an instruction.
-However, as we have shown, any instruction may require multiple steps like various output-enable's and write-enable's at different times.
-This sequence of operations is referred to as _microcode_ and it is composed of _microoperations_ (uOPs, u resembling the Greek letter mu, the SI-prefix for micro-).
+However, as shown, any single instruction may require multiple steps like various output-enable's and write-enable's at different times.
+These operations are called _microoperations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
 
-This under-specification of what an implementation must do has many advantages.
+This under-specification of what an implementation must do has advantages.
 For computer hardware engineers, it gives a lot of freedom in choosing an appropriate microarchitecture for various use-cases.

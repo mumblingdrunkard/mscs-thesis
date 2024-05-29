@@ -1,1 +1,1 @@
-== High-performance Processor Architecture
+== High-performance Processor Architecture <sec:high-performance-processor-architecture>

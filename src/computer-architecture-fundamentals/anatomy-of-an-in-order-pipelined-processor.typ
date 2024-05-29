@@ -17,6 +17,8 @@ Between each stage, there is a big register called a _pipeline register_ that ho
 The values come from outputs of previous stages, and are used as inputs in the current stage.
 Each stage takes only one cycle to complete 
 
+This is a form of _instruction-level parallelism_ (ILP): the observation that a processor can work on many instructions at the same time because each instruction requires different parts of the processor at any given time.
+
 @fig:pipelined-cpu shows a high-level overview of a pipelined processor.
 In this version, the ID and OF stages are merged together, meaning values are read out of the register file at the same time the instruction is being decoded.
 Each stage is separated by a pipeline register.

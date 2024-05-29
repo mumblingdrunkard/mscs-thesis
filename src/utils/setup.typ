@@ -116,6 +116,7 @@
     }
   }
 
+
   show heading: it => {
     block(breakable: false, {
       if it.numbering != none {
@@ -124,9 +125,11 @@
       }
       show text: underline
       it.body
+      v(.75em)
     })
   }
 
+  show heading.where(level: 1): set heading(supplement: "Chapter")
   show heading.where(level: 1): it => {
     pagebreak(to: "odd", weak: true)
     block(breakable: false, {
