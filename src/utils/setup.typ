@@ -96,13 +96,6 @@
 
   show heading: set par(first-line-indent: 0pt)
   show heading: set text(weight: 550)
-  // show heading: it => {
-  //   if it.numbering != none {
-  //     numbering(it.numbering, ..counter(heading).at(it.location()))
-  //     [ ]
-  //   }
-  //   underline(it.body)
-  // }
 
   set figure(placement: auto)
 
@@ -125,7 +118,6 @@
       }
       show text: underline
       it.body
-      v(.75em)
     })
   }
 

@@ -70,4 +70,4 @@ If the assumption turns out to be correct, three cycles have been saved.
 If the assumption turns out to be wrong, the results of the incorrectly fetched instructions must be _squashed_ (ignored).
 
 The next step up is to observe patterns in branch instructions and predict the outcome with more accuracy to prevent squashing too often.
-This is the founding basis of _branch prediction_.
+This is the founding basis of _branch prediction_, a form of _speculation_.

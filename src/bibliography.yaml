@@ -29,7 +29,7 @@ bib:kvalsvik-thesis:
 
 bib:nodland-paper:
   type: article
-  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine"
+  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine _(unpublished)_"
   subtitle: "TDT4501 --- Computer Science, Specialization Project"
   author:
     - Nodland, Elias
@@ -53,6 +53,13 @@ bib:rfp:
     type: proceedings
     title: "ISCA '22: Proceedings of the 49th Annual International Symposium on Computer Architecture"
     publisher: "Association for Computing Machinery"
+
+bib:two-hard-things:
+  type: web
+  url: "https://martinfowler.com/bliki/TwoHardThings.html"
+  author: 
+    - Karlton, Phil
+    - Fowler, Martin
 
 bib:riscv:
   type: book

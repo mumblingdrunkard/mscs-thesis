@@ -93,7 +93,7 @@ An exception is made for the _register_ cell which is constructed by using logic
 A register cell stores a value that can be read back out.
 It will usually have three inputs: data $d$, write $w$, and enable $e$.
 The operation of the register cell can be described thus:
-When write $w$ and enable $e$ are both true, the data $d$ is stored in the cell.
+When write $w$ and enable $e$ are both true, the data $d$ are stored in the cell.
 
 @fig:register-cell-diagram shows a basic register cell as described.
 Notice how the output of each of the rightmost NOT-gates feed back into each other's inputs.
@@ -218,7 +218,7 @@ They read values from the register file, perform some computation with the value
 
 Memory instructions load from or store to memory.
 A load instruction has a destination register that it loads into, and a source register where the address comes from.
-A store instruction has a source register where the address comes from, and another source register where the data comes from.
+A store instruction has a source register where the address comes from, and another source register where the data come from.
 
 ==== Branch and Jump Instructions
 
@@ -231,6 +231,10 @@ Jump instructions are like branch instructions, except there are no registers to
 Jump instructions come in several variants, but _jump-and-link_ (JAL) is a common one.
 Jump-and-link writes the current value of the program counter to a destination register and jumps to the specified location.
 This is useful for function calls and returns.
+
+==== Instruction Encoding Formats
+
+Along with instructions and their effects, the ISA document must also specify what instructions "look like" to the processor: which sequences of bits and bytes correspond to each instruction.
 
 === A Basic Implementation
 
@@ -300,7 +304,7 @@ The `PC` then needs to be updated by incrementing the stored value:
 + `ALU` output-enable, `PC` write-enable.
 
 And so it continues.
-Notice that even a basic instruction like addition requires at least eight cycles.
+Notice that even a basic instruction like addition requires at least eight cycles---likely more, as the control logic has to determine which operations to perform in each step.
 There are some easy optimisations like adding a separate connection from `MEM` to `CTRL` and read the instruction address straight from the bus instead, or to add specialised hardware to increment `PC`.
 
 === Microarchitecture vs. Big A Architecture
@@ -312,7 +316,7 @@ Just like the language standard does not specify which machine instructions shou
 Herein lies the distinction between the ISA and what is called _microarchitecture_.
 For an ISA, the basic unit of a program is an instruction.
 However, as shown, any single instruction may require multiple steps like various output-enable's and write-enable's at different times.
-These operations are called _microoperations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
+These steps are called _microoperations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
 
-This under-specification of what an implementation must do has advantages.
-For computer hardware engineers, it gives a lot of freedom in choosing an appropriate microarchitecture for various use-cases.
+This under-specification of what an implementation must do gives a lot of freedom in choosing an appropriate microarchitecture for various use-cases.
+Throughout this thesis, we will present and discuss various microarchitectural patterns and optimisations.
