@@ -27,9 +27,47 @@ bib:kvalsvik-thesis:
   archive: "NTNU Open"
   url: "https://hdl.handle.net/11250/2833643"
 
+bib:vhdl-standard:
+  type: book
+  title: "1076-2019 - IEEE Standard for VHDL Language Reference Manual"
+  publisher: "IEEE"
+  date: 2019-12-23
+  serial-number:
+    isbn: 978-1-5044-6135-1
+    doi: "10.1109/IEEESTD.2019.8938196"
+  url: 
+    value: "https://ieeexplore.ieee.org/servlet/opac?punumber=8938194"
+    date: 2024-06-02
+
+bib:systemverilog-standard:
+  type: book
+  title: "1800-2023 - IEEE Standard for SystemVerilog--Unified Hardware Design, Specification, and Verification Language"
+  publisher: "IEEE"
+  date: 2024-02-28
+  serial-number:
+    isbn: 979-8-8557-0500-3
+    doi: "10.1109/IEEESTD.2024.10458102"
+
+bib:banked-register-files:
+  type: article
+  title: "Banked Multiported Register Files for High-Frequency Superscalar Microprocessors"
+  author:
+    - Tseng, Jessica H.
+    - Asanovi\'c, Krste
+  publisher: "Association for Computing Machinery"
+  archive: "ACM Digital Library"
+  date: 2003-06
+  page-range: 62-71
+  doi: "10.1145/871656.859627"
+  url: "https://doi.org/10.1145/871656.859627"
+  parent:
+    type: proceedings
+    title: "ISCA '03: Proceedings of the 30th Annual International Symposium on Computer Architecture"
+    publisher: "Association for Computing Machinery"
+
 bib:nodland-paper:
   type: article
-  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine _(unpublished)_"
+  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine (unpublished)"
   subtitle: "TDT4501 --- Computer Science, Specialization Project"
   author:
     - Nodland, Elias

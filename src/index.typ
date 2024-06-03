@@ -6,7 +6,10 @@
 #{
   include "./introduction/index.typ"
   include "./computer-architecture-fundamentals/index.typ"
+  include "./modern-hardware-design/index.typ"
+  include "./processor-security/index.typ"
   include "./doppelganger-loads/index.typ"
+  include "./berkeley-out-of-order-machine/index.typ"
   include "./architecture/index.typ"
   include "./implementation/index.typ"
   include "./methodology/index.typ"

@@ -1,7 +1,7 @@
 == Scaling Up
 
 There are two main ways to increase the performance of a processor to do more work in the same amount of time:
-1) Increase the frequency of the clock, or
+1) Increase the clock frequency, or
 2) increase the number of instructions performed each clock cycle... somehow.
 This section provides a short overview of the history of performance improvements and the mechanisms by which the performance improvements have been achieved.
 
@@ -9,7 +9,7 @@ This section provides a short overview of the history of performance improvement
 
 For a while, two key phenomena dominated the improvements in processor performance: Moore's Law, and Dennard Scaling.
 Moore's Law is the observation that the number of transistors that fit within a given area roughly doubles every eighteen months (later changed to every two years) because improvements in technology lead to smaller transistors.
-Because everything shrinks, the physical distances get shorter, and the required energy to transmit information from A to B also shrinks.
+Because everything shrinks, the physical distances get shorter, and the required energy to transmit information from point A to point B also shrinks.
 The water analogy holds here.
 If the wires between components in the chip are tubes, and the tubes have to be filled up and drained every time a bit is changed, shorter, narrower tubes require less total volume to flow.
 The tubes have a lower capacity.
@@ -26,7 +26,7 @@ The frequency of the transistor cannot exceed $1/d_max$ where $d_max$ is the max
 
 A basic equation governs the power consumption of processors:
 $
-  P = alpha f C V^2
+  P_"dyn" = alpha f C V^2
 $
 Dynamic power consumption (power consumed due to signals turning on and off within the circuit) is equal to the frequency of switching, multiplied by the capacitance of the circuit, multiplied by the square of the applied voltage.
 This is scaled by some scaling factor $alpha$.

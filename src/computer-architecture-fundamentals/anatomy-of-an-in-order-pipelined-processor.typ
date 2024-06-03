@@ -24,7 +24,7 @@ In this version, the ID and OF stages are merged together, meaning values are re
 Each stage is separated by a pipeline register.
 
 #figure(
-  ```asciidraw
+  ```monosketch
             ┌───────────────────────────┐
             │       ┌────────┬────┐     │
             │       │ ┌───┐  │    │     │

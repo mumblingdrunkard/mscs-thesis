@@ -1,5 +1,11 @@
 = Doppelganger Loads
 
-Because this thesis revolves around the implementation of doppelganger loads, we have decided to split this out into its own chapter to give a more comprehensive overview of the topic.
+This thesis revolves around implementing doppelganger loads in hardware.
+This chapter presents doppelganger loads, how they are implemented, how they do not change the safety guarantees of secure speculation, and how they improve performance.
+At its core, doppelganger loads attempt to regain some of the MLP that is lost when applying secure speculation schemes @bib:doppelganger.
 
-At its core, doppelganger loads is an attempt to regain some of the MLP that is lost when implementing secure speculation schemes that prevent secret leakage through the cache side-channel @bib:doppelganger.
+== Register File Prefetching
+
+== Register File Prefetching is Safe Under Some Conditions
+
+== The Cost of Doppelganger Loads

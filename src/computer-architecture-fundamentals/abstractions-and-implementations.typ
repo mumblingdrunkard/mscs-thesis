@@ -100,7 +100,7 @@ Notice how the output of each of the rightmost NOT-gates feed back into each oth
 Because of this feedback, when one output is "True", the other must be "False".
 
 #figure(
-  ```asciidraw
+  ```monosketch
            ┌───┐
           ╭┤NOT├┬───┐
           │└───┘│AND├┬──┐ ┌───┐
@@ -124,7 +124,7 @@ For example: the operation of a register cell is shown in @fig:register-cell-wav
 This kind of diagram is called a _waveform_.
 
 #figure(
-  ```asciidraw
+  ```monosketch
      ╭─╮ ╭─╮ ╭─╮ ╭─╮ 
   e ─╯ ╰─╯ ╰─╯ ╰─╯ ╰─
      ╭─╮         ╭─╮ 
@@ -184,19 +184,28 @@ Different systems of logic can define different values with different operators 
 However, for the purposes of indeterminate binary logic, this type of three-valued logic is quite suitable.
 Notice that in @tab:truth-tables-3vl, changing an incoming 'M' to a 'T' or 'F' will not make an outgoing 'T' or 'F' change.
 
-#block(breakable: false)[
 === Components of an Instruction Set Architecture
 
 An ISA defines an abstract computer, the instructions it executes, and what the effects of those instructions are.
 In this section, we cover the most basic components of such a specification.
 Most ISA documents will specify all of these concepts.
-]
 
 ==== Memory Space
 
 The memory space is most often defined as an array of bytes (groups of eight bits).
-Values can be read from memory at an _address_ which is an index into this large array.
+Values can be loaded from memory at an _address_ which is an index into this large array.
 Certain areas of this memory may be used for storing things like instructions and data, others can be mapped to inputs and outputs of various devices.
+
+ISAs designed for running operating systems usually contain specifications for how _memory virtualisation_ works.
+Virtualised memory uses _virtual addresses_ and a _translation_ scheme to translate from these virtual addresses to the "real" physical addresses.
+This way, individual applications can access the same virtual address, but refer to different values.
+Thus, an operating system can, for example, start two instances of the same program without them interferring with each other's values.
+
+Virtual memory is often handled at the granulaity of _pages_ where a fixed size section of virtual memory is mapped continuously to an equally sized section in physical memory.
+Pages that are adjacent---according to their addresses---in virtual memory are not necessarily adjacent in physical memory.
+
+Virtual memory is transparent.
+I.e.: it does not matter to an individual application whether the memory space it uses is virtualised or not.
 
 ==== Program Counter
 
@@ -204,7 +213,7 @@ The _program counter_ (PC) holds the memory address of the next instruction to b
 
 ==== Register File
 
-Most ISAs say that the machine should have a set of registers, often called the _register file_.
+Most ISAs state that the machine should have a set of registers, often called the _register file_.
 This is storage that instructions will have fast and direct access to.
 The ISA defines how many registers there should be and how large they are.
 Each register in the file is assigned a number and instructions can refer to the particular register by its number.
@@ -242,7 +251,7 @@ Along with instructions and their effects, the ISA document must also specify wh
 Components with double borders are registers (storage), while those with a single border perform logic.
 
 #figure(
-  ```asciidraw
+  ```monosketch
   ┏ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━   ╔════╗         ╔════════╗
                        ┃  ║ADDR◀─────┐◁──▶  REG   ║
   ┃                       ╚═╤══╝     │   ╚════════╝
@@ -260,7 +269,7 @@ Components with double borders are registers (storage), while those with a singl
 
 The components are as follows:
 - The shared bus, which is the line that runs vertically between the components,
-- `ADDR`, the memory address to read or write from in the memory:
+- `ADDR`, the memory address to load from or store to in the memory:
 - `MEM`, the actual memory of the processor,
 - `REG`, the register file,
 - `OP1` and `OP2`, the source operands of the
@@ -288,7 +297,7 @@ Because this architecture uses a shared bus, components must be able disconnect 
 Without going into too much detail, the control logic contains components that interpret encoded instructions and determine what and when control signals should be set to certain values to perform the instructions.
 We will assume everything runs on a common clock.
 
-The first thing the control logic should do is to read the next instruction from memory.
+The first thing the control logic should do is to load the next instruction from memory.
 Cycle for cycle:
 + `PC` output-enable, `ADDR` write-enable.
 + `MEM` output-enable, `CTRL` stores the resulting value from the bus in some internal register.
@@ -316,7 +325,7 @@ Just like the language standard does not specify which machine instructions shou
 Herein lies the distinction between the ISA and what is called _microarchitecture_.
 For an ISA, the basic unit of a program is an instruction.
 However, as shown, any single instruction may require multiple steps like various output-enable's and write-enable's at different times.
-These steps are called _microoperations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
+These steps are called _micro-operations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
 
 This under-specification of what an implementation must do gives a lot of freedom in choosing an appropriate microarchitecture for various use-cases.
 Throughout this thesis, we will present and discuss various microarchitectural patterns and optimisations.

@@ -3,7 +3,10 @@
 
 #let setup = body => {
   set text(size: 10pt)
+  set text(font: "New Computer Modern")
   set par(justify: true, linebreaks: "optimized")
+  //set par(first-line-indent: 1em, leading: .65em)
+  //show par: set block(spacing: .65em)
   
   set page(paper: "a4", margin: (x: 30mm, top: 21mm, bottom: 28mm), number-align: bottom, header-ascent: 2em, footer-descent: 2em)
 
@@ -34,24 +37,6 @@
   })
 
   show figure.where(kind: table): set figure.caption(position: top)
-  
-  // show figure.where(kind: math.equation): set figure(numbering: num => {
-  //   let loc = query(selector(math.equation).after(here())).first().location()
-  //   let n = query(selector(heading.where(level: 1)).before(here())).last().numbering
-  //   [(]
-  //   numbering(n, counter(heading).get().first())
-  //   if n.last() != "." {
-  //     [.]
-  //   }
-  //   numbering("1", counter(math.equation).at(loc).first())
-  //   [)]
-  // })
-  // show figure.where(kind: math.equation): set figure(supplement: [])
-
-  // show figure.where(kind: math.equation): it => {
-  //   it.body
-  //   align(center, it.caption.body)
-  // }
   
   set math.equation(numbering: num => {
     // Get heading numbering at this point
@@ -102,13 +87,11 @@
   show ref: it => {
     let el = it.element
     if el != none and el.func() == figure {
-      set text(weight: "black")
-      it
+      text(weight: "black", it)
     } else {
       it
     }
   }
-
 
   show heading: it => {
     block(breakable: false, {
@@ -168,13 +151,9 @@
     }
   })
 
-  show raw: set text(font: "DejaVu Sans Mono", size: 8pt)
-
-  // Ascii figures
-  show raw.where(lang: "asciidraw"): it => {
-    set par(leading: 0.4em)
-    it
-  }
+  show raw.where(block: true): set text(font: "DejaVu Sans Mono", size: 7pt)
+  set raw(theme: "../MultiMarkdown.tmTheme")
+  show raw.where(block: true): set par(leading: .4em)
 
   include "../frontmatter/abstract.typ"
   include "../frontmatter/acknowledgements.typ"
