@@ -7,7 +7,6 @@ bib:doppelganger:
   - Kaxiras, Stefanos
   - Sjalander, Magnus
   date: 2023-06-17
-  #publisher: "Association for Computing Machinery"
   archive: "ACM Digital Library"
   url: "https://doi.org/10.1145/3579371.3589088"
   doi: "10.1145/3579371.3589088"
@@ -53,7 +52,7 @@ bib:banked-register-files:
   title: "Banked Multiported Register Files for High-Frequency Superscalar Microprocessors"
   author:
     - Tseng, Jessica H.
-    - Asanovi\'c, Krste
+    - Asanović, Krste
   publisher: "Association for Computing Machinery"
   archive: "ACM Digital Library"
   date: 2003-06
@@ -66,9 +65,9 @@ bib:banked-register-files:
     publisher: "Association for Computing Machinery"
 
 bib:nodland-paper:
-  type: article
-  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine (unpublished)"
-  subtitle: "TDT4501 --- Computer Science, Specialization Project"
+  type: manuscript
+  title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine"
+  note: "unpublished"
   author:
     - Nodland, Elias
   date: 2023-12
@@ -102,25 +101,25 @@ bib:two-hard-things:
 bib:riscv:
   type: book
   title: The RISC-V Instruction Set Manual
-  volume: "I: User-Level ISA"
-  edition: Document Version 2.2
+  volume: "I: Unprivileged Architecture"
+  edition: Version 20240411
   editor: 
     - Waterman, Andrew
     - Asanović, Krste
   publisher: RISC-V Foundation
-  date: 2017-05
+  date: 2024-04-11
 
 bib:riscv-privileged:
   type: book
   title: The RISC-V Instruction Set Manual
   volume: "II: Privileged Architecture"
-  edition: Document Version 20211203
+  edition: Document Version 20240411
   editor: 
     - Waterman, Andrew
     - Asanović, Krste
     - Hauser, John
   publisher: RISC-V International
-  date: 2021-12
+  date: 2024-04-11
 
 bib:boom-core:
   type: web
@@ -402,7 +401,6 @@ bib:rocket-chip:
   url: http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.html
   date: 2016
 
-
 bib:chipyard:
   type: article
   author:
@@ -421,8 +419,8 @@ bib:chipyard:
     - Wright, John
     - Zhao, Jerry
     - Shao, Yakun Sophia
-    - Asanovi\'c, Krste
-    - Nikoli\'c, Borivoje
+    - Asanović, Krste
+    - Nikolić, Borivoje
   title: "Chipyard: Integrated Design, Simulation, and Implementation Framework for Custom SoCs"
   date: 2020
   volume: 40
@@ -438,3 +436,13 @@ bib:verilator:
     value: https://www.veripool.org/verilator/
     date: 2023-12-03
 
+bib:retiming:
+  type: article
+  title: "Retiming Synchronous Circuitry"
+  author:
+    - Leiserson, Charles E.
+    - Saxe, James B.
+  date: 1991
+  parent:
+    title: "Algorithmica (1991)"
+    publisher: Springer-Verlag

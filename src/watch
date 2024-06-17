@@ -1,4 +1,4 @@
 #!/bin/sh
-./watch-diagrams.sh &
+# ./watch-diagrams.sh &
 typst watch index.typ --open
 wait

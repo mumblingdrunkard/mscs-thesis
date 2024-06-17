@@ -1,4 +1,4 @@
-== Scaling Up
+== Scaling Up <sec:scaling-up>
 
 There are two main ways to increase the performance of a processor to do more work in the same amount of time:
 1) Increase the clock frequency, or
@@ -8,42 +8,45 @@ This section provides a short overview of the history of performance improvement
 === The Easy Option: Increasing Frequency
 
 For a while, two key phenomena dominated the improvements in processor performance: Moore's Law, and Dennard Scaling.
-Moore's Law is the observation that the number of transistors that fit within a given area roughly doubles every eighteen months (later changed to every two years) because improvements in technology lead to smaller transistors.
-Because everything shrinks, the physical distances get shorter, and the required energy to transmit information from point A to point B also shrinks.
+Moore's Law is the observation that the number of transistors that fit within a given area is roughly doubled every eighteen months (later changed to every two years) because of improvements in technology.
+Because everything shrinks, the physical distances get shorter, and transmitting information between components uses less energy.
 The water analogy holds here.
 If the wires between components in the chip are tubes, and the tubes have to be filled up and drained every time a bit is changed, shorter, narrower tubes require less total volume to flow.
 The tubes have a lower capacity.
 The electrical equivalent is _capacitance_, denoted by the symbol $C$.
 
 The important capacitances in a circuit are those of the transistors and of the wires.
-For the water analogy, transistors have buckets that must be filled or drained.
-For a transistor to reliably switch on or off, the water level, or voltage, must reach above or below a certain threshold.
-Capacitance in a circuit means that after applying a voltage at one end, it takes some time before the other end reaches that same voltage.
+For the water analogy: transistors have buckets that must be filled and drained above and below a given level to reliably switch on or off.
+Capacitance in a circuit means that after applying a voltage level at one end, it takes some time before the other end reaches that same voltage level.
 Transistors also have an internal _transition time_, the time it takes for the output to reliably change after changing an input.
 This time is proportional to the capacitance.
 The maximum frequency of the circuit is governed by delays, which are in turn dominated by this transition time.
 The frequency of the transistor cannot exceed $1/d_max$ where $d_max$ is the maximum delay from one register to the next.
 
-A basic equation governs the power consumption of processors:
+A basic equation describes the power consumption of processors:
 $
-  P_"dyn" = alpha f C V^2
+  P = alpha f C V^2 + P_"static"
 $
-Dynamic power consumption (power consumed due to signals turning on and off within the circuit) is equal to the frequency of switching, multiplied by the capacitance of the circuit, multiplied by the square of the applied voltage.
+Dynamic power consumption (power consumed due to signals turning on and off within the circuit) is equal to the frequency of switching $f$, multiplied by the capacitance $C$ of the circuit, multiplied by the square of the applied voltage $V$.
 This is scaled by some scaling factor $alpha$.
+There is also some constant $P_"static"$ which was negligible for a while.
 
-Due to physical properties, a reduction in transistor size causes an approximately equal reduction in capacitance and voltage.
-With an equal shrinking voltage, the transition time still decreases in proportion to the transistor shrink.
-Because the transition time decreases, the delay decreases, and the frequency can be scaled up and performance can be increased.
+Due to physical properties, a reduction in transistor sizes causes an approximately equal reduction in capacitance and voltage.
+With an equal reduction in voltage, the transition time still decreases in proportion to the transistor shrink.
+Because the transition time decreases, the delay decreases, and the frequency can be scaled up and performance, thus increasing performance.
 With these different factors, it can be shown that as technology improves and transistors shrink, the _power density_ stays approximately constant.
 That is, each square millimetre of circuit has approximately the same power output, no matter the technology.
 Conversely: the same circuit can be implemented in less area, using less power, all while running faster.
 
 This is Dennard Scaling: the observation that power density stays the same across improvements in technology.
-To get a faster and more power-efficient processor: wait.
+To get a faster and more power-efficient processor: _wait_.
 
-These two "laws" stood for much of the improvements in processor performance until Dennard Scaling started breaking down around two decades ago.
+These two "laws" were responsible for much of the performance improvements until Dennard Scaling started breaking down around two decades ago.
 The number of transistors per area has still been increasing steadily---albeit at a slower pace---but the frequency increases have been much, much smaller.
-The reason for this is mostly attributed to static power (power needed just because the circuit is turned on without any computation going on) becoming a larger factor as transistors shrink.
+The reason for this is attributed to _static power_---power used just because the circuit is turned on without any computation going on---becoming a larger factor as transistors shrink.
+
+This is problematic because more power means more heat.
+When the processor becomes too hot, the materials within it start breaking down.
 
 To meet performance goals, companies started turning up frequencies more than Dennard Scaling allowed for.
 To increase the frequency beyond the max frequency, the voltage must be tuned up to decrease the delays.
@@ -51,9 +54,9 @@ This causes the power output to scale with the cube of the frequency increase, w
 
 === Scaling Horizontally
 
-The second alternative to increase work per second is to scale horizontally by adding more units that can perform execution.
-This still works quite well as the number of transistors per area keeps increasing: this extra area can be spent on more execution units.
-This category can be split into two further groups:
+The second alternative to increase work per unit of time is to scale horizontally by adding more units that can perform execution.
+As the number of transistors per area keeps increasing, the extra area can be spent on more execution units.
+This category of scaling can be split into two further groups:
 
 ==== Adding Cores
 

@@ -2,54 +2,54 @@
 
 Everything is an _abstraction_.
 There are multiple layers of abstraction.
-There are contracts between those layers, specifying a common language that the layer above speaks, and that the layer below understands.
+There are contracts/interfaces between those layers, specifying a common language that the layer above speaks, and that the layer below understands.
 When programming, a programmer is describing a program in a defined language.
-The language standard defines how certain language constructs affect the _abstract machine_ of the language.
+The language standard defines how parts of the language affect an _abstract machine_.
 
 Programs are written with _intention_ and are written for _machines_.
 The fundamental job of a compiler or interpreter is to take the source code and transform it into a different form that is executable on a _target machine_ while preserving the behaviour of the program as it would have executed on the abstract machine.
 
 This target machine is no different from the abstract machine:
 The interface of the target machine is defined by a document that specifies a language---instructions and instruction encodings---and the effects that this language has on the state of the machine.
-This is referred to as the instruction set architecture (ISA), or "big A Architecture".
+This is referred to as the _instruction set architecture_ (ISA).
 
-The machine specified by the ISA is also an abstraction.
+The machine specified by the ISA is an abstraction.
 Computer hardware engineers are tasked with implementing a machine that behaves like this abstract machine.
 Different requirements of the hardware and its use-cases will motivate different implementations.
-Some use-cases require low power consumption---others just need the most computing performance possible.
+Some use-cases require low power consumption---others might require the most computing performance possible.
 
 === Logic Fundamentals
 
 The most basic unit of computation is the transistor.
-It is an electrical switch that can be flipped using electricity.
+It is a switch that can be turned on or off using electricity.
 By using clever organisations of transistors, it is possible to express boolean logic.
 
 Boolean logic concerns itself with two values: true and false, 1 and 0, yes and no, on and off, high and low.
 Because individual transistors are hard to work with and do not look pretty in diagrams, they are grouped together to form basic _logic gates_ and the group is replaced by an appropriate symbol.
-This is an abstraction to more easily focus on the logic and not the physical implementation, though it is still a simple mapping to do.
+This is an abstraction to more easily focus on the logic and not the physical implementation, though it is a trivial mapping, like assembly to machine code.
 
 A logic gate has one or more inputs and outputs.
 It always has the same output for the same input.
-The behaviour of a logic gate is often expressed through truth tables such as the one shown in @tab:truth-tables.
+The behaviour of a logic gate can be expressed through truth tables such as the one shown in @tab:truth-tables.
 
 #figure(caption: "Truth table for two-input, single-output AND, OR, and XOR gates", {
 show "F": set text(fill: gray.darken(20%))
 table(
   columns: (auto, ) * 5,
-  [$p$], [$q$], [$p "AND" q$], [$p "OR" q$], [$p "XOR" q$],
-  [ F ], [ F ], [         F ], [        F ], [         F ],
-  [ F ], [ T ], [         F ], [        T ], [         T ],
-  [ T ], [ F ], [         F ], [        T ], [         T ],
-  [ T ], [ T ], [         T ], [        T ], [         F ],
+  $p$, $q$, $p "AND" q$, $p "OR" q$, $p "XOR" q$,
+  [F], [F], [        F], [       F], [        F],
+  [F], [T], [        F], [       T], [        T],
+  [T], [F], [        F], [       T], [        T],
+  [T], [T], [        T], [       T], [        F],
 )})<tab:truth-tables>
 
 Here, the values 'F' and 'T' stand for "False" and "True", respectively.
 $p$ and $q$ are the inputs and the remaining three columns show the output of three types of gates.
-Logic gates can be arranged in patterns to produce all kinds of logic.
+Logic gates can be arranged in larger circuits.
 
 ==== Selecting From Several Sources
 
-A multiplexer, or "mux" for short, is a very fundamental kind of gate.
+As an example of how gates can be arranged in larger circuits, a multiplexer, or "mux" for short, is a very fundamental kind of circuit.
 It has at least three inputs: $p$, $q$, and $s$, and an output $o$.
 The truth table for a mux is shown in @tab:mux-truth-table.
 
@@ -57,22 +57,22 @@ The truth table for a mux is shown in @tab:mux-truth-table.
 show "F": set text(fill: gray.darken(20%))
 table(
   columns: (auto, ) * 4,
-  [$p$], [$q$], [$s$], [$o$],
-  [ F ], [ F ], [ F ], [ F ],
-  [ F ], [ T ], [ F ], [ F ],
-  [ T ], [ F ], [ F ], [ T ],
-  [ T ], [ T ], [ F ], [ T ],
-  [ F ], [ F ], [ T ], [ F ],
-  [ F ], [ T ], [ T ], [ T ],
-  [ T ], [ F ], [ T ], [ F ],
-  [ T ], [ T ], [ T ], [ T ],
+  $p$, $q$, $s$, $o$,
+  [F], [F], [F], [F],
+  [F], [T], [F], [F],
+  [T], [F], [F], [T],
+  [T], [T], [F], [T],
+  [F], [F], [T], [F],
+  [F], [T], [T], [T],
+  [T], [F], [T], [F],
+  [T], [T], [T], [T],
 )})<tab:mux-truth-table>
 
 The basic operation of a mux is that $s = "F" ==> o = p$, and $s = T ==> o = q$.
 A mux can, as an example, be implemented as $(p "AND" ("NOT" s)) "OR" (q "AND" s)$.
 The unary $"NOT"$-gate simply inverts its input.
 
-==== Representing Numbers
+==== Working with Numbers
 
 "True" and "False" can be used to represent the ones and zeroes of a binary number.
 It is simple to create a logic circuit that performs, for example, long-addition on these numbers.
@@ -82,18 +82,18 @@ It has two outputs: sum $s = a "XOR" b$, and carry $c = a "AND" b$.
 A full-adder is like a half-adder, but it also accounts for a third input bit: carry-in.
 An adder is constructed by chaining full-adders, connecting the carry output of one full-adder into the carry-in of the next.
 
-==== Storing Information
+==== Circuits with Memory
 
-Logic is cool, but computers also require _state_---as in "state of being".
-When arranging logic gates, most would say it is a good idea to ensure the resulting network of gates is a directed acyclic graph (DAG).
+Logic is useful, but computers require _state_---as in "state of being".
+When building circuits, it is a good idea to ensure the resulting network of gates is a directed acyclic graph (DAG).
 That is to say: the input of any one gate cannot depend on its own output, directly or transitively; there is no path from the output of the gate back to the input.
-This is called a _combinational loop_ and most tools prevent making them.
+Such a path is called a _combinational loop_ and most tools prevent making them.
 
 An exception is made for the _register_ cell which is constructed by using logic gates that connect back to themselves with positive feedback.
 A register cell stores a value that can be read back out.
-It will usually have three inputs: data $d$, write $w$, and enable $e$.
+It will usually have two inputs: data $d$, and enable $e$.
 The operation of the register cell can be described thus:
-When write $w$ and enable $e$ are both true, the data $d$ are stored in the cell.
+When enable $e$ is true, the data $d$ are stored in the cell.
 
 @fig:register-cell-diagram shows a basic register cell as described.
 Notice how the output of each of the rightmost NOT-gates feed back into each other's inputs.
@@ -110,25 +110,22 @@ Because of this feedback, when one output is "True", the other must be "False".
           │  │   │ ╰───────────╮
           │  │   ╰───┬──┐ ┌───┐│
   d ──────┴──│──┬───┐│OR├─┤NOT├┴──── o'
-  w ───┬───┐ │  │AND├┴──┘ └───┘
-       │AND├─┴──┴───┘
-  e ───┴───┘
+             │  │AND├┴──┘ └───┘
+  e ─────────┴──┴───┘
   ```,
   caption: [A register cell using logic gates],
   kind: image,
 )<fig:register-cell-diagram>
 
 With registers in place, _time_ is introduced as a factor.
-The output is no longer purely a function of the current input, but can depend on system state.
+The output of the circuit is no longer purely a function of the current input, but can depend on previous inputs and an initial state.
 For example: the operation of a register cell is shown in @fig:register-cell-waveform.
 This kind of diagram is called a _waveform_.
 
 #figure(
   ```monosketch
-     ╭─╮ ╭─╮ ╭─╮ ╭─╮ 
-  e ─╯ ╰─╯ ╰─╯ ╰─╯ ╰─
-     ╭─╮         ╭─╮ 
-  w ─╯ ╰─────────╯ ╰─
+     ╭─╮ ╭─╮     ╭─╮ 
+  e ─╯ ╰─╯ ╰─────╯ ╰─
     ───────╮         
   d        ╰─────────
      ╭───────────╮   
@@ -138,51 +135,59 @@ This kind of diagram is called a _waveform_.
   kind: image
 )<fig:register-cell-waveform>
 
+The storage element shown here is actually called a _latch_ and it updates continuously while the $w$ and $e$ signals are enabled.
+Another kind of register cell is the _flip-flop_ which can be constructed from two latches where the output of the first one (called the master), is fed into a second (called the slave).
+The enable input of the slave latch $e'$ is the inverted value of the enable input $e$ of the master latch.
+In this way, the master latch can receive an updated value while signal is high, and the slave latch is only updated once the clock signal goes low again.
+
+It is difficult to ensure all latches update at the same time in a reliable manner.
+Because of this, registers are usually implemented using flip-flops to give more tolerance.
+
 ==== Register-Transfer Level
 
 Registers and logic are the basic building blocks of the _register-transfer level_ (RTL).
 This is an abstraction level where circuits are modeled as flows of data between registers.
 
-A _clock_ signal that toggles between on and off at a steady rate can be attached to the enable input $e$ of all registers in the circuit to ensure a common time for when values change.
+A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all registers in the circuit to ensure a common time for when values change.
 The space between two _rising edges_ (where the signal goes from low to high), is called a _clock cycle_.
 When drawing diagrams, the clock signal is usually left out for brevity.
 
-==== Three-Valued Logic
+// ==== Three-Valued Logic
 
-What happens when the register cell in @fig:register-cell-diagram goes from an unpowered state, to a powered one, assuming that the inputs $d$, $w$, and $e$ are all "False"?
-If the inputs to the NOT-gates also starts out as "False", both will turn on their output, in turn turning off the other output.
-This is a _race condition_, and it leads to less predictable outcomes.
-It is unreliable to assume a given value when power is first supplied.
+// What happens when the register cell in @fig:register-cell-diagram goes from an unpowered state, to a powered one, assuming that the inputs $d$, $w$, and $e$ are all "False"?
+// If the inputs to the NOT-gates also starts out as "False", both will turn on their output, in turn turning off the other output.
+// This is a _race condition_, and it leads to less predictable outcomes.
+// It is unreliable to assume a given value when power is first supplied.
 
-This could be solved by adding reset logic to every register.
-It is sometimes useful, however, to simply treat the value as an unknown.
-Introducing a "Maybe" value gives rise to a three-valued logic.
-As an example, the truth table in @tab:truth-tables-3vl shows the operation of the AND and OR gates with this three-valued logic.
+// This could be solved by adding reset logic to every register, but that is a costly solution.
+// Instead, it is sometimes useful to treat the value as an unknown.
+// Introducing "Maybe" as a value gives rise to a three-valued logic.
+// As an example, the truth table in @tab:truth-tables-3vl shows the operation of the AND and OR gates with this three-valued logic.
 
-#figure(
-  caption: [Truth-table for OR and AND with three-valued logic],
-  {
-    show "F": set text(fill: gray.darken(20%))
-    show "M": set text(fill: gray.darken(60%))
-    table(columns: (auto, ) * 4,
-      $p$, $q$, $p "AND" q$, $p "OR" q$,
-      [F], [F], [        F], [       F],
-      [F], [M], [        F], [       M],
-      [F], [T], [        F], [       T],
-      [M], [F], [        F], [       M],
-      [M], [M], [        M], [       M],
-      [M], [T], [        M], [       T],
-      [T], [F], [        F], [       T],
-      [T], [M], [        M], [       T],
-      [T], [T], [        T], [       T],
-    )
-  }
-)<tab:truth-tables-3vl>
+// #figure(
+//   caption: [Truth-table for OR and AND with three-valued logic],
+//   {
+//     show "F": set text(fill: gray.darken(20%))
+//     show "M": set text(fill: gray.darken(60%))
+//     table(columns: (auto, ) * 4,
+//       $p$, $q$, $p "AND" q$, $p "OR" q$,
+//       [F], [F], [        F], [       F],
+//       [F], [M], [        F], [       M],
+//       [F], [T], [        F], [       T],
+//       [M], [F], [        F], [       M],
+//       [M], [M], [        M], [       M],
+//       [M], [T], [        M], [       T],
+//       [T], [F], [        F], [       T],
+//       [T], [M], [        M], [       T],
+//       [T], [T], [        T], [       T],
+//     )
+//   }
+// )<tab:truth-tables-3vl>
 
-Three-valued logic is not some sort of standard.
-Different systems of logic can define different values with different operators entirely.
-However, for the purposes of indeterminate binary logic, this type of three-valued logic is quite suitable.
-Notice that in @tab:truth-tables-3vl, changing an incoming 'M' to a 'T' or 'F' will not make an outgoing 'T' or 'F' change.
+// Three-valued logic is not some sort of standard.
+// Different systems of logic can define different values with different operators entirely.
+// However, for the purposes of indeterminate binary logic, this type of three-valued logic is quite suitable.
+// Notice that in @tab:truth-tables-3vl, changing an incoming 'M' to a 'T' or 'F' will not make an outgoing 'T' or 'F' change.
 
 === Components of an Instruction Set Architecture
 
@@ -247,7 +252,7 @@ Along with instructions and their effects, the ISA document must also specify wh
 
 === A Basic Implementation
 
-@fig:basic-computer shows a very basic implementation of a compute-capable architecture.
+@fig:basic-computer shows an implementation of a compute-capable architecture.
 Components with double borders are registers (storage), while those with a single border perform logic.
 
 #figure(
@@ -270,7 +275,7 @@ Components with double borders are registers (storage), while those with a singl
 The components are as follows:
 - The shared bus, which is the line that runs vertically between the components,
 - `ADDR`, the memory address to load from or store to in the memory:
-- `MEM`, the actual memory of the processor,
+- `MEM`, the memory of the processor,
 - `REG`, the register file,
 - `OP1` and `OP2`, the source operands of the
 - `ALU`, the _arithmetic-logic unit_, and
@@ -324,8 +329,8 @@ Just like the language standard does not specify which machine instructions shou
 
 Herein lies the distinction between the ISA and what is called _microarchitecture_.
 For an ISA, the basic unit of a program is an instruction.
-However, as shown, any single instruction may require multiple steps like various output-enable's and write-enable's at different times.
+However, as shown, any single instruction may require multiple steps such as various output-enable's and write-enable's at different times.
 These steps are called _micro-operations_ (uOPs, u resembling the Greek letter #math.mu, the SI-prefix for micro-).
 
 This under-specification of what an implementation must do gives a lot of freedom in choosing an appropriate microarchitecture for various use-cases.
-Throughout this thesis, we will present and discuss various microarchitectural patterns and optimisations.
+Throughout this thesis, we present and discuss various microarchitectural patterns and optimisations.

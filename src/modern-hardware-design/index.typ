@@ -1,6 +1,6 @@
 = Modern Hardware Design
 
-Throughout this thesis, we discuss relations between abstract representations of circuits and their actual implementation as transistors and wires.
+Throughout this thesis, we discuss relations between abstract representations of circuits and their implementation as transistors and wires.
 
 == Register-Transfer Level and Hardware Description Languages
 
@@ -48,7 +48,7 @@ The elements described here come from SystemVerilog.
         AND : result = in_a & in_b;
         OR  : result = in_a | in_b;
         XOR : result = in_a ^ in_b;
-        default : result = in_a + in_b;
+        default : result = 'x;
       endcase
       out_value = value;
       out_valid = valid;
@@ -70,7 +70,7 @@ The elements described here come from SystemVerilog.
 )<lst:systemverilog-example>
 
 It has to be noted that SystemVerilog is a high-level language.
-Logic and registers are _inferred_ and are not explicitly declared by the programmer.
+Logic and flip-flops are _inferred_ and are not explicitly declared by the programmer.
 
 First off, the code in @lst:systemverilog-example declares a module called `alu` that has six inputs: `clk`, `nrst`, `in_a`, `in_b`, `in_op`, and `in_valid`.
 The types of these inputs can be user-defined like `word_t` and `op_t` or one of the primitive types like `logic`.
@@ -83,7 +83,7 @@ In SystemVerilog `=` is a _blocking assignment_, meaning all subsequent operatio
 The default case ensures `result` is always assigned to something, no matter the value of `in_op`.
 The outputs are also set to match the internal values `value` and `valid`.
 
-Next follows another procedure `always_ff` indicating the intent that the logic within will be sequential.
+Next follows another procedure `always_ff` (always flip-flop, flip-flop being a ) indicating the intent that the logic within will be sequential.
 This logic only triggers on the positive edge of `clk` or on the negative edge of `nrst`.
 Then, if `nrst` is false (if `!nrst` is true), set the `valid` value to 0 using a _non-blocking assignment_ (`<=`).
 A non-blocking assignment is different in that the assignment only takes effect at the end of the simulation cycle.
@@ -93,11 +93,13 @@ Otherwise, if `!nrst` is false, the code checks whether the `in_valid` signal is
 
 === Mapping High-Level Constructs to Logic Gates
 
-As mentioned, we are mostly concerned with the synthesisable subset of the discussed HDLs.
-As part of that, we should describe how different HDL code can be synthesised into actual hardware.
+As mentioned, we are concerned with the synthesisable subset of the discussed HDLs.
+As part of that, we describe how different HDL code can be synthesised into hardware.
+
+==== Logic
 
 For example, the case-statement can be represented as a series of `if`-`else if`-`else` statements, which can be constructed in hardware as a series of muxes, as shown in @fig:case-synthesis.
-Here, there are five units that perform the respective operations.
+There are five units that perform the respective operations.
 There are also comparison units to determine whether the incoming `op` is one of the given operations, represented as `*?` where `*` is the operation.
 The results of these comparisons are used to control several muxes represented by `M`.
 When the control signal is low, the mux selects the top output, and when the signal is high, it selects the bottom output.
@@ -127,27 +129,55 @@ When the control signal is low, the mux selects the top output, and when the sig
   kind: image,
 )<fig:case-synthesis>
 
-To synthesise non-blocking assignments, registers will be inferred to store values between cycles.
+==== Maybe, DontCare, and Unknown
+
+Notice that the value `'x` is assigned to `result` in the default case.
+This is not a "real" value and is treated as "unknown" or "invalid".
+When assigning `'x` like this, the programmer says that they do not care about the result in that case.
+All values must eventually resolve to high or low in a physical implementation, but "don't care" values convey the semantic meaning that in this case, the implementation of the circuit is allowed to do anything.
+This liberty has been taken by merging the `+` case with the default case.
+
+Such values are often referred to as "maybe", "don't care", or "unknown".
+They are neither true nor false, but possibly both.
+The truth tables for gates can be modified to account for unknown values and produce sensible results.
+For example: the output of an OR-gate is always true if at least one of its inputs are true, it is only false if both inputs are false, and otherwise, it is unknown.
+The output of an AND-gate is true only if both inputs are true, it is false if at least one of the inputs are false, and it is unknown otherwise.
+
+This kind of three-valued logic is available in SystemVerilog, though standard practices seem to avoid them.
+In this case, it may be better to explicitly specify that the default case should return the same result as the `+`-case.
+
+==== Latches and Flip-Flops
+
+As mentioned `always_ff` implies that the logic contained inside should require flip-flop registers for the logic.
+Non-blocking assignments can be implemented using flip-flops as described in the previous chapter.
+By using a flip-flop style circuit, the output is only updated once the clock-signal goes low again.
+
+Latches are _inferred_ by verilog when a signal is not assigned in all possible cases.
+For example if the `case`-statement was missing cases and did not have a `default` case, the value of `result` would be indeterminate.
+SystemVerilog is defined such that variables retain their previously assigned value unless updated.
+A latch can be used to accomplish this and only enable the latch when there is an updated value available.
+However, this behaviour is commonly undesirable as it is often unintentional and adds more delay, which is why the `always_comb` block exists.
+If something inside an `always_comb` block results in an inferred latch, the tooling for the language gives an error or a warning.
 
 === Scaling Circuits
 
 With HDLs, it may be easy to forget that the circuit is supposed to go through synthesis.
-For example: variable indexing in arrays requires a mux network for each place the array is indexed.
-Adding more ports to read from an array of values can be expensive.
+For example: variable indexing (where the index might change every cycle) in arrays requires a mux network for each place the array is indexed.
+Adding more ports to read from an array of values can be even more expensive as it complicates wiring.
 
-This is even more true for arrays of registers.
-Ports dedicated to writing to registers are much more expensive to implement than read ports.
+This is more true for arrays of stored values (large flip-flop structures).
+Ports dedicated to writing to registers are more expensive to implement than ports for reading.
 For multiple instructions to write back their results to the PRF, it must have multiple ports for writing.
-Naive scaling is expensive and a lot of research has been done to reduce the number of actual ports needed in the register file @bib:banked-register-files.
+Naive scaling is expensive and much research has been done to reduce the number of ports needed in the register file @bib:banked-register-files.
 
 == Testing Designs
 
 There are several ways to go about testing hardware designs.
-Unsynthesisable features of HDLs are included exactly because they are useful for testing circuit behaviour.
+Unsynthesisable features of HDLs are included because they are useful for testing circuit behaviour.
 
 === Simulation of Register-Transfer Level
 
-The first alternative is to run the code in a simulator.
+One alternative is to run the code in a simulator.
 A simulator takes the code and runs it according to the lanugage standard.
 A popular simulator is _Verilator_ @bib:verilator which accepts SystemVerilog and translates it to a multithreaded model that can be executed on the host system.
 
@@ -162,52 +192,70 @@ Wires between the LUTs and other components like registers can be programmed in 
 A two-input LUT can act as any logic gate by programming it with the same behaviour as the appropriate truth table.
 
 With a proper bit-stream and enough components, an FPGA can be programmed to act like any circuit.
-FPGAs are much faster than simulators, and even though they are slower than creating a dedicated circuit, they are still representative of metrics like _instructions per cycle_.
+FPGAs are much faster than simulators, and even though they are slower than creating an integrated circuit, they are still representative of metrics like IPC.
+
 
 == Logic Synthesis: From Register-Transfer Level to Logic Gates
 
-As shown in @fig:case-synthesis, translation from HDL to a circuit can be quite simple and easy.
+As shown in @fig:case-synthesis, translation from HDL to a circuit can be simple.
 This is the job of synthesis.
-The abstract circuit behaviour described by the HDL must be translated to a concrete implementation in terms of logic gates.
+The abstract circuit behaviour described by the HDL must be translated to a concrete implementation in terms of logic gates made from transistors.
 
-Real logic synthesis tools will generally use larger primitives, often with various different actual implementations depending on the needs.
-Often, a larger circuit can have a lower latency#footnote[See carry look-ahead adders.].
+Logic synthesis tools will use larger primitives with various different implementations depending on requirements for timing.
+A physically larger circuit can have a shorter delay#footnote[See carry look-ahead adders.].
 
 === Circuit Optimisation
 
-The circuit was generated naively and contains a critical path that has to go through more blocks than necessary.
+The circuit in @fig:case-synthesis was generated naively and contains a path that has to go through more logic than necessary.
+This means the maximal delay of the circuit is higher than it needs to be.
 There are many transformations that can be performed on the circuit that preserve correct behaviour.
 
+==== Restructuring
+
 One example is turning a cascaded sequence of muxes---like the one in @fig:case-synthesis ---into a tree as shown in @fig:mux-tree.
-This reduces the number of muxes that a signal must pass through to get to the final output.
+This reduces the number of muxes that a signal must pass through to get to the final output without increasing the number of components needed.
+The important thing here is that the longest possible delay is reduced.
 
 #figure(
   ```monosketch
-      │          
-   ──┬┴┐  │           
-     │M├─┬┴┐       
-   ──┴─┘ │M├┐ │     
-        ─┴─┘└┬┴┐    
-        ─┬─┐ │M├─  
-         │M├─┴─┘   
-        ─┴┬┘    
-          │       
+    │          
+  ─┬┴┐  │           
+   │M├─┬┴┐       
+  ─┴─┘ │M├┐ │     
+      ─┴─┘└┬┴┐    
+      ─┬─┐ │M├─  
+       │M├─┴─┘   
+      ─┴┬┘    
+        │       
   ```,
   caption: "Turning the staggered muxes into a tree",
   kind: image,
 )<fig:mux-tree>
 
-=== Place and Route
-
-Another step in the process is _place and route_ in which the individual logic gates are placed in space and are connected by wires.
-The rules of place and route are dictated by the underlying technology to be used.
-Place and route ties together with higher level logic synthesis and optimising a circuit is an iterative process.
-
-The longest possible path a signal can take between a register output and another register input is called the critical path.
-Here, longest means the one with teh longest delay.
+The longest possible path a signal can take between a flip-flop output and another flip-flop input---in terms of delay---is called the _critical path_.
 There may be physically long wires with short delays.
 Optimisation will iteratively focus on shortening the longest path by replacing circuits along it with ones that shorten the delay.
 
-It is common for certain circuits with defined behaviours to be hand-designed.
-Place and route will use these hand-designed circuits as building blocks for the larger circuit.
+==== Retiming
+
+Another important optimisation is _retiming_ where flip-flops and latches are moved, inserted, or removed in the circuit in a way that preserves behaviour at the output @bib:retiming.
+For example, in the circuit shown, the result is assigned to an output in a way that should infer a flip-flop.
+However, if the output of this circuit is immediately assigned to a flip-flop again by a consumer, there is an imbalance where a lot of logic is done in the first circuit, but no logic (and thus, inconsequential delay) is performed between the output flip-flop and the next flip-flop.
+
+A synthesising process will recognise this situation and move the output flip-flop into the circuit, so that some of the logic occurs before the flip-flop, and some of it happens after it.
+This way, the clock frequency can be increased because the longest path between flip-flops is shortened.
+
+Because of this retiming, it is often not necessary to be explicit about manually balancing logic between flip-flops.
+This means that it is possible to do complex, slow logic, then assign the result to a chain of flip-flops and let the retiming algorithm deal with balancing the timing of the circuit.
+
+=== Place and Route
+
+The final step in the process is _place and route_ in which the individual transistors are placed in space and are connected by wires.
+The rules of place and route are dictated by the underlying technology to be used.
+Certain designs that are simple to implement when creating integrated circuits, can be complicated to implement when using an FPGA.
+High-level designs can be optimised for the underlying technology, but it requires having the knowledge of how constructs translate to the underlying technology.
+Place and route ties together with higher level logic synthesis and optimising a circuit is an iterative process.
+
+It is normal for certain common circuits to be designed by hand.
+Place and route will use these circuits as building blocks for the larger circuit.
 _Static random access memory_ (SRAM) blocks are often hand-designed to optimise for area and power usage.

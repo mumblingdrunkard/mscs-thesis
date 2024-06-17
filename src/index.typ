@@ -10,10 +10,9 @@
   include "./processor-security/index.typ"
   include "./doppelganger-loads/index.typ"
   include "./berkeley-out-of-order-machine/index.typ"
-  include "./architecture/index.typ"
-  include "./implementation/index.typ"
+  include "./architecture-and-implementation/index.typ"
   include "./methodology/index.typ"
   include "./results/index.typ"
-  include "./reflection/index.typ"
+  include "./discussion/index.typ"
   include "./conclusion/index.typ"
 }

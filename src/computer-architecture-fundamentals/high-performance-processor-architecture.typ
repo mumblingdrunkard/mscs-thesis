@@ -85,12 +85,49 @@ In large designs, the processor often has enough available work to perform to co
 
 === Speculative Execution
 
-OoO processors rely on branch predictors to keep the frontend from stalling and keep the backend fed with instructions.
+Processors rely on branch predictors to keep the frontend from stalling and keep the backend fed with instructions.
 Branch instructions may take a lot of time to resolve, for example if they depend on the result of a load instruction that misses in the L1d.
 
 The nature of OoO execution means later instructions will continue executing while waiting for the branch to resolve.
 If the prediction turns out to be wrong, the processor state will be rolled back to just after the branch and the frontend will be redirected to the correct path of execution.
 
-All the execution between a branch prediction being made and a branch resolving is _speculative_.
-When the prediction is incorrect, the speculative execution is squashed and is called _transient execution_.
+All the work between a branch prediction being made and a branch resolving is _speculative_.
+When the prediction is incorrect, the speculative work is squashed and is called _transient execution_.
 Transient, meaning it exists only for a short span of time.
+Speculation happens in InO processors too, but as branches are resolved in order, incorrectly fetched instructions do not get to affcet microarchitectural state such as caches.
+This is not the case in OoO processors where a load instruction fetched after a speculated branch is allowed to access memory before it is known whether it really is part of proper execution.
+
+=== Performance and Metrics
+
+When discussing the performance of modern processors, there are several important metrics to consider.
+The total work performed by a processor is the _instructions per second_ (IPS), commonly given as _millions of instructions per second_ (MIPS).
+IPS is a product of the average number of _instructions per cycle_ (IPC) and _cycles per second_ (which is just called the frequency, denoted by Hz).
+The inverse of IPC is _cycles per instruction_ (CPI).
+
+Consider that not all instructions are created equal.
+An IPS of 1'000'000 in one ISA may not be equivalent to an IPS of 1'000'000 in another ISA if one of them performs less "real work" per instruction.
+It is still a useful metric when comparing micro-architectures for the same ISA.
+
+Lastly, _performance per watt_ (PPW) and _energy per instruction_ (EPI) are useful metrics.
+When operating at the limit of heat dissipation, the only way to improve performance is to do so in tandem with improvements in PPW.
+
+==== Predictions
+
+As we discuss predictions in this thesis, we should cover some of the metrics used when discussing predictors of various sorts.
+
+Various metrics affect the efficacy of cache prefetching such as _accuracy_, _coverage_, and _timeliness_.
+Accuracy is the number of useful prefetches compared to the number of performed prefetches.
+Coverage is the fraction of misses that instead become hits due to prefetching.
+Timeliness is a metric that says something about the usefulness of the data that are prefetched.
+If a prefetch request goes out too late, the next request may come in before the data are fully in cache.
+
+Timeliness is a yes-or-no answer, while accuracy and coverage are metrics with tradeoffs.
+Issuing more prefetches when the prediction is uncertain but there is available capacity may increase coverage at the cost of reducing accuracy and wasting more power.
+Issuing more prefetches might also have the adverse effect of reducing performance by taking up limited bandwidth, or it might cause useful data to be _evicted_ (pushed out) from the cache to make space for prefetched data that aren't useful.
+
+Branch predictors have an accuracy measurement which is the ratio of correct predictions to the number of branch instructions fetched.
+Branch predictors don't have coverage as they have to cover 100% of branches, lest fetching stall completely.
+When branch predictors fail to make predictions using advanced algorithms, they fall back on heuristics like "always taken" or "never taken".
+
+Whether branch predictors can be "timely" in the same manner is perhaps up for debate.
+When fetching multiple instructions per cycle, a branch prediction can be "late" without affecting performance as long as the processor is not completing instrucitons faster than they can be fetched.

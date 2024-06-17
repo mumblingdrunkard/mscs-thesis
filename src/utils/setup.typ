@@ -3,8 +3,8 @@
 
 #let setup = body => {
   set text(size: 10pt)
-  set text(font: "New Computer Modern")
-  set par(justify: true, linebreaks: "optimized")
+  // set text(font: "New Computer Modern")
+  set par(justify: true, linebreaks: "simple")
   //set par(first-line-indent: 1em, leading: .65em)
   //show par: set block(spacing: .65em)
   
@@ -29,11 +29,7 @@
   set figure(numbering: num => {
     // Get heading numbering at this point
     let n = query(selector(heading.where(level: 1)).before(here())).last().numbering
-    numbering(n, counter(heading).get().first())
-    if n.last() != "." {
-      [.]
-    }
-    numbering("1.", num)
+    numbering(n + ".1.", counter(heading).get().first(), num)
   })
 
   show figure.where(kind: table): set figure.caption(position: top)
@@ -43,9 +39,7 @@
     let n = query(selector(heading.where(level: 1)).before(here()))
     if n.len() > 0 and n.last().numbering != none {
       [(]
-      numbering(n.last().numbering, counter(heading).get().first())
-      [.]
-      numbering("1", num)
+      numbering(n.last().numbering + ".1", counter(heading).get().first(), num)
       [)]
     }
   })

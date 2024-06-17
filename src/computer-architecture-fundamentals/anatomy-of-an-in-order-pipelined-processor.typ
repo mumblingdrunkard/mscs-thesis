@@ -1,4 +1,4 @@
-== Anatomy of an In-order Pipelined Processor
+== Anatomy of an In-order Pipelined Processor <sec:pipelined-processor>
 
 This first major optimisation of the microarchitecture is based on the observation that all instructions have required steps in common, and that the components used in each step are usually different.
 
