@@ -2,8 +2,6 @@
 
 = Discussion
 
-#todo[FN Sustainability Goals]
-
 == Architecture
 
 == Implementation
@@ -14,4 +12,10 @@
 
 == Problems
 
+== Future Work
+
 == Miscellaneous Musings
+
+=== UN Sustainability Goals
+
+#todo[FN Sustainability Goals]

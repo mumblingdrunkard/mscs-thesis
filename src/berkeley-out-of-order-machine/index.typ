@@ -1,6 +1,7 @@
 = The Berkeley Out-of-Order Machine
 
 The Berkeley Out-of-Order Machine (BOOM) is an open-source-software (OSS) project from the University of California, Berkeley (UC Berkeley).
+It is an implementation of a 64-bit RISC-V processor
 
 == RISC-V
 
@@ -34,6 +35,8 @@ The privileged architecture specifies a scheme for virtual memory using pages of
 
 == Development
 
+Development in the BOOM project uses various tools 
+
 === Chisel
 
 === Verilator
@@ -44,8 +47,9 @@ The privileged architecture specifies a scheme for virtual memory using pages of
 
 The BOOM uses, as the name would imply, an OoO microarchitecture.
 Here, we present the components of the BOOM that are relevant to this text.
+We may mention other components that are not fully explained, but their naming should give clear hints to their operation.
 
-=== High-Level Architecture
+=== High-Level Architecture and Code Organisation
 
 === Anatomy of a Micro-operation
 

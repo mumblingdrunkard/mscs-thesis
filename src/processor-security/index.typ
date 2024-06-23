@@ -52,9 +52,13 @@ Making leaked information independent of secrets requires programmers to make ca
 
 ==== Stopping the Leaks
 
+Stopping leaks can be done 
+
 ==== Secret-Independent Programming
 
 Accepting side channels as a fact of life.
+
+== Threat Modelling
 
 == Speculative Execution Vulnerabilities in Out-of-Order Processors
 
@@ -65,7 +69,7 @@ The nature of OoO processors means an application may leak values through variou
 Speculative execution attacks use features of the microarchitecture to reliably force the processor to mis-speculate in a victim application and enter an unintended path of execution that leaks secret values into side-channels.
 They then use the same, or other features to reliably extract information from those side-channels to obtain the secret values.
 
-This means that OoO processors are uniquely vulnerable to a class of attacks that are not possible on InO processors.
+OoO processors are uniquely vulnerable to a class of attacks that are not possible on InO processors.
 
 === Spectre and Meltdown as a Class of Vulnerabilities
 

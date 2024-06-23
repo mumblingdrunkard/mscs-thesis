@@ -9,7 +9,7 @@ This section provides a short overview of the history of performance improvement
 
 For a while, two key phenomena dominated the improvements in processor performance: Moore's Law, and Dennard Scaling.
 Moore's Law is the observation that the number of transistors that fit within a given area is roughly doubled every eighteen months (later changed to every two years) because of improvements in technology.
-Because everything shrinks, the physical distances get shorter, and transmitting information between components uses less energy.
+As everything shrinks, the physical distances get shorter, and transmitting information between components uses less energy.
 The water analogy holds here.
 If the wires between components in the chip are tubes, and the tubes have to be filled up and drained every time a bit is changed, shorter, narrower tubes require less total volume to flow.
 The tubes have a lower capacity.
@@ -44,6 +44,8 @@ To get a faster and more power-efficient processor: _wait_.
 These two "laws" were responsible for much of the performance improvements until Dennard Scaling started breaking down around two decades ago.
 The number of transistors per area has still been increasing steadily---albeit at a slower pace---but the frequency increases have been much, much smaller.
 The reason for this is attributed to _static power_---power used just because the circuit is turned on without any computation going on---becoming a larger factor as transistors shrink.
+Static power becomes an increasingly large part of power consumption as it becomes more difficult to electrically insulate components within the circuit when they become too small, leading to _leakage_ where electrons can cross through material that is intended to be non-conductive.
+A current flows within the circuit simply because there is an electron supply and not because any computation is being performed.
 
 This is problematic because more power means more heat.
 When the processor becomes too hot, the materials within it start breaking down.

@@ -1,10 +1,11 @@
 #import "./latex.typ" as latex
 #import "./acronyms.typ" as acronyms
+#import "./config.typ" as config
 
 #let setup = body => {
   set text(size: 10pt)
-  // set text(font: "New Computer Modern")
-  set par(justify: true, linebreaks: "simple")
+  set text(font: config.font)
+  set par(justify: true, linebreaks: "optimized")
   //set par(first-line-indent: 1em, leading: .65em)
   //show par: set block(spacing: .65em)
   

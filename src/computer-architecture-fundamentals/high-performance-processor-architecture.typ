@@ -1,3 +1,5 @@
+#import "../utils/utils.typ": *
+
 == High-Performance Processor Architecture <sec:high-performance-processor-architecture>
 
 With the basics covered, we can move on to the state of the art of processing:
@@ -5,15 +7,14 @@ out-of-order (OoO) processors.
 In-order (InO) processors execute instructions in program order and later instructions cannot start until earlier instructions have progressed past some point, even if their dependencies are ready.
 OoO processors attempt to exploit all available ILP by executing multiple instructions in parallel, allowing instructions to execute as soon as their dependencies are resolved.
 
-This means later instructions can complete before earlier ones.
+Later instructions can complete before earlier ones.
 For example, a load instruction that misses in the L1d may not finish for several tens of cycles.
-Instructions that are not dependent on that load instruction can progress as normal and finish before it.
-I.e.: out-of-order.
+Instructions that are not dependent on that load instruction can progress as normal and finish before it; i.e.: out-of-order.
 
 === Available Instruction-Level Parallelism
 
 We should specify what we mean when we say that there is available ILP even when the parallelisation of a program across many cores is difficult or impossible.
-Any program, as a sequence of instructions, can be represented as a graph where later instructions can depend on earlier instructions.
+Any program, can be represented as a graph where later instructions can depend on earlier instructions, but they do not depend on all of them.
 There are different types of dependencies, of which only one kind is really important in modern OoO processors.
 
 ==== Read-After-Write Dependencies
@@ -65,9 +66,9 @@ When FUs produce results, they may be passed on to other units for further proce
 
 The ROB has a _head-_ and a _tail_-end.
 uOPs enter the ROB at the tail-end.
-As uOPs at the head-end finish, they commit and the head moves toward the tail.
+As uOPs at the head-end finish, they _commit_ and the head moves toward the tail.
 It is only after committing that instructions are truly reflected in the architectural state.
-This means that commit happens in-order.
+Commit happens in-order because the ROB is in-order.
 Up until that point, their results may be _rolled back_ (undone), which can be necessary in the case of exceptions or mispredictions.
 In practice, the ROB is implemented as a circular buffer.
 
@@ -106,7 +107,7 @@ The inverse of IPC is _cycles per instruction_ (CPI).
 
 Consider that not all instructions are created equal.
 An IPS of 1'000'000 in one ISA may not be equivalent to an IPS of 1'000'000 in another ISA if one of them performs less "real work" per instruction.
-It is still a useful metric when comparing micro-architectures for the same ISA.
+It is still a useful metric when comparing micro-architectures for the same ISA, but can be misleading when comparing microarchitectures for different ISAs.
 
 Lastly, _performance per watt_ (PPW) and _energy per instruction_ (EPI) are useful metrics.
 When operating at the limit of heat dissipation, the only way to improve performance is to do so in tandem with improvements in PPW.
@@ -126,8 +127,8 @@ Issuing more prefetches when the prediction is uncertain but there is available 
 Issuing more prefetches might also have the adverse effect of reducing performance by taking up limited bandwidth, or it might cause useful data to be _evicted_ (pushed out) from the cache to make space for prefetched data that aren't useful.
 
 Branch predictors have an accuracy measurement which is the ratio of correct predictions to the number of branch instructions fetched.
-Branch predictors don't have coverage as they have to cover 100% of branches, lest fetching stall completely.
-When branch predictors fail to make predictions using advanced algorithms, they fall back on heuristics like "always taken" or "never taken".
+Branch predictors do not have coverage as they have to cover 100% of branches, lest fetching stall completely.
+When branch predictors fail to make predictions using advanced algorithms, they fall back on heuristics like "always jump" or "never jump" based on good guesses about how normal programs are written #footnote[ Branches that jump back in the program are associated with loops and are usually always taken in the first few iterations. ].
 
 Whether branch predictors can be "timely" in the same manner is perhaps up for debate.
 When fetching multiple instructions per cycle, a branch prediction can be "late" without affecting performance as long as the processor is not completing instrucitons faster than they can be fetched.

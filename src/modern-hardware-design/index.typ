@@ -9,7 +9,7 @@ They are far too complex for that.
 Logic gates are also too concrete for the algorithms used when optimising designs, described later in this chapter.
 
 Instead, modern hardware is designed using _hardware description languages_ (HDL): code that describes registers and logic and how they are connected.
-Popular languages include the _VHSIC hardware description language_ (VHDL) @bib:vhdl-standard, and _SystemVerilog_ @bib:systemverilog-standard.
+Popular languages include the _VHSIC#footnote[Very High Speed Integrated Circuit was a research program by the United States Department of Defense to develop high-speed integrated circuits.] hardware description language_ (VHDL) @bib:vhdl-standard, and _SystemVerilog_ @bib:systemverilog-standard.
 
 === Language Primitives
 
@@ -83,7 +83,7 @@ In SystemVerilog `=` is a _blocking assignment_, meaning all subsequent operatio
 The default case ensures `result` is always assigned to something, no matter the value of `in_op`.
 The outputs are also set to match the internal values `value` and `valid`.
 
-Next follows another procedure `always_ff` (always flip-flop, flip-flop being a ) indicating the intent that the logic within will be sequential.
+Next follows another procedure `always_ff` (always flip-flop) indicating the intent that the code within will require flip-flop circuits to implement.
 This logic only triggers on the positive edge of `clk` or on the negative edge of `nrst`.
 Then, if `nrst` is false (if `!nrst` is true), set the `valid` value to 0 using a _non-blocking assignment_ (`<=`).
 A non-blocking assignment is different in that the assignment only takes effect at the end of the simulation cycle.
@@ -143,12 +143,12 @@ The truth tables for gates can be modified to account for unknown values and pro
 For example: the output of an OR-gate is always true if at least one of its inputs are true, it is only false if both inputs are false, and otherwise, it is unknown.
 The output of an AND-gate is true only if both inputs are true, it is false if at least one of the inputs are false, and it is unknown otherwise.
 
-This kind of three-valued logic is available in SystemVerilog, though standard practices seem to avoid them.
+This kind of three-valued logic is available in SystemVerilog, though standard practice seems to avoid them.
 In this case, it may be better to explicitly specify that the default case should return the same result as the `+`-case.
 
 ==== Latches and Flip-Flops
 
-As mentioned `always_ff` implies that the logic contained inside should require flip-flop registers for the logic.
+As mentioned `always_ff` implies that the logic contained inside should require flip-flops for the logic.
 Non-blocking assignments can be implemented using flip-flops as described in the previous chapter.
 By using a flip-flop style circuit, the output is only updated once the clock-signal goes low again.
 
@@ -156,6 +156,7 @@ Latches are _inferred_ by verilog when a signal is not assigned in all possible 
 For example if the `case`-statement was missing cases and did not have a `default` case, the value of `result` would be indeterminate.
 SystemVerilog is defined such that variables retain their previously assigned value unless updated.
 A latch can be used to accomplish this and only enable the latch when there is an updated value available.
+A latch continuously reads and outputs the input value while the enable-signal is active.
 However, this behaviour is commonly undesirable as it is often unintentional and adds more delay, which is why the `always_comb` block exists.
 If something inside an `always_comb` block results in an inferred latch, the tooling for the language gives an error or a warning.
 
@@ -206,8 +207,7 @@ A physically larger circuit can have a shorter delay#footnote[See carry look-ahe
 
 === Circuit Optimisation
 
-The circuit in @fig:case-synthesis was generated naively and contains a path that has to go through more logic than necessary.
-This means the maximal delay of the circuit is higher than it needs to be.
+The circuit in @fig:case-synthesis was generated naively and contains a path that has to go through more logic than necessary; the maximal delay of the circuit is higher than it needs to be.
 There are many transformations that can be performed on the circuit that preserve correct behaviour.
 
 ==== Restructuring
@@ -246,7 +246,11 @@ A synthesising process will recognise this situation and move the output flip-fl
 This way, the clock frequency can be increased because the longest path between flip-flops is shortened.
 
 Because of this retiming, it is often not necessary to be explicit about manually balancing logic between flip-flops.
-This means that it is possible to do complex, slow logic, then assign the result to a chain of flip-flops and let the retiming algorithm deal with balancing the timing of the circuit.
+It is possible to do complex, slow logic, then assign the result to a chain of flip-flops and let the retiming algorithm deal with balancing the timing of the circuit.
+
+Optimisations like these are only possible because the code conveys _intent_.
+The language standard does not require that each signal used by the programmer actually exists in the final implementation, only that the circuit behaves _as if_.
+I.e., behaviour is only required to be preserved at the inputs and outputs of the system.
 
 === Place and Route
 

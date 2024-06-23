@@ -1,4 +1,4 @@
-= Computer Architecture Fundamentals <ch:comp.arch.-fundamentals>
+= Computer Architecture Fundamentals <ch:computer-architecture-fundamentals>
 
 By the nature of the genre (master's theses), this text is targeted at those graduating from a programme in computer science or similar.
 Let $A$ be the set of all computer science students, and $B$ be the set of all computer science students that specialise in computer architecture.
@@ -12,10 +12,9 @@ The next section covers a different, more optimised implementation of a processo
 Next follows a short coverage of memory and related terminology.
 Lastly, we cover how a modern, high-performance processor tackles this complexity by using a different philosophy entirely.
 
-#{
-  include "./abstractions-and-implementations.typ"
-  include "./anatomy-of-an-in-order-pipelined-processor.typ"
-  include "./scaling-up.typ"
-  include "./memory-and-caching.typ"
-  include "./high-performance-processor-architecture.typ"
-}
+#include "./abstractions-and-implementations.typ"
+#include "./anatomy-of-an-in-order-pipelined-processor.typ"
+#include "./scaling-up.typ"
+#include "./memory-and-caching.typ"
+#include "./high-performance-processor-architecture.typ"
+#include "./reduced-vs-complex-instruction-set-computers.typ"

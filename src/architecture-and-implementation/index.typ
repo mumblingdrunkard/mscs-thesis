@@ -48,7 +48,7 @@ Along with the scheme for efficient predictor storage we displayed the predictor
 
 == Generating Predictions for Incoming Load Instructions
 
-
+The core is connected 
 
 == Sending Predictions to the Load-Store Unit
 

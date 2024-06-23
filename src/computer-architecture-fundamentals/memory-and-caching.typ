@@ -1,6 +1,6 @@
 #import "../utils/utils.typ": *
 
-== Interlude: Memory, Caches, and Memory Models
+== Interlude: Memory, Caches, and Consistency Models
 
 For a processor to perform well, it needs relatively fast access to memory.
 Main memory technologies like _dynamic random access memory_ (DRAM) have high capacities and generally high bandwidths, which is good, but they also have high _latencies_; the time between requesting data and getting the data back.
@@ -56,7 +56,7 @@ The data cache can be optimised for accessing differently sized elements at diff
 Caches are organised as a collection of _sets_.
 When accessing the cache, bits from the address are used to select the specific set for the processor to look in.
 These bits form the _index_.
-This means that the data of any given address can only be found within a specific set.
+The data of any given address can only be found within a specific set.
 Each set is also split into one or more _blocks_ or _lines_.
 We will refer to them as blocks.
 Each block contains a number of bytes which are the data being accessed.
@@ -88,18 +88,18 @@ For example: iterating over an array in a loop will generate requests for addres
 Thus, if one such request starts by accessing the second-to-last byte in a block, then the last one, it is reasonable to assume that the next request will be for the first byte in the next block.
 Using this information, the cache can begin loading the block before it is even known to be needed---called _prefetching_.
 
-=== Memory Models
+=== Consistency Models
 
 ISA documents generally do not specify how a cache---or any other structures interacting with memory---should behave.
 Whether a certain implementation is a valid one depends on the memory  model of the ISA.
 
-Memory models specify which effective orderings of memory accesses are valid in different scenarios.
+Consistency models specify which effective orderings of memory accesses are valid in different scenarios.
 Explaining the concept in full detail is too great an undertaking, so we have settled for a simple example with two cores: one executing two store instructions, and another executing two load instructions.
 
 @lst:ordering-example shows instructions executed on two different cores.
 $A$ and $B$ are values stored in memory.
 These values are both set to 0 before execution starts.
-A memory model says which possible values Core 2 ($C_2$) can observe for $A$ and $B$, and what the value of one implies about the value of the other.
+A consistency model says which possible values Core 2 ($C_2$) can observe for $A$ and $B$, and what the value of one implies about the value of the other.
 
 #figure(grid(columns: (auto, ) * 2, gutter: 60pt, [
   ```
@@ -117,7 +117,7 @@ A memory model says which possible values Core 2 ($C_2$) can observe for $A$ and
   caption: [Two store instructions and two load instructions executing on different cores]
 )<lst:ordering-example>
 
-The most important thing to recognise about memory models is that the _observed order_ of memory accesses not necessarily corresponds to the _program order_.
+The most important thing to recognise about consistency models is that the _observed order_ of memory accesses not necessarily corresponds to the _program order_.
 The program order is the order in which the instructions appear in the program during correct execution.
 
 ==== The Effect of Caching
@@ -134,23 +134,23 @@ The order of memory operations would appear to be:
 As can be seen here, the order of the load instructions has been swapped.
 In the program, the load of $B$ went before the load of $A$, but in the observed ordering, they appear in a different order.
 
-==== Different Memory Models
+==== Different Consistency Models
 
-The job of memory models is to define which orderings are allowed in scenarios like the one above.
-Memory models can be divided into two groups: _weak_ and _strong_.
+The job of consistency models is to define which orderings are allowed in scenarios like the one above.
+Consistency models can be divided into two groups: _weak_ and _strong_.
 Strong models place more restrictions on the possible orderings, while weak models place few restrictions.
 Strong models arguably "make more sense" and are likely to be a better fit for normal intuition.
 However, strong models pose a challenge for computer engineers in feasibly implementing them.
-There is no "best" model#footnote[Besides the venerable DEC Alpha, which has the coolest weak memory model and allows some abhorrently unintuitive behaviours.], only tradeoffs for computer hardware engineers and computer programmers.
+There is no "best" model#footnote[Besides the venerable DEC Alpha, which has the coolest weak consistency model and allows some abhorrently unintuitive behaviours.], only tradeoffs for computer hardware engineers and computer programmers.
 
-An example of a strong memory model is the _total store order_ (TSO) which says that store instructions from the same core cannot be re-ordered, nor can load instructions.
+An example of a strong consistency model is the _total store order_ (TSO) which says that store instructions from the same core cannot be re-ordered, nor can load instructions.
 Later load instructions in program order can go ahead of preceding store instructions as long as they don't alias (access the same address).
 
 With TSO, the result above would be disallowed as the load of $A$ is seeing an older value of $A$ than the value loaded for $B$.
 Note that even under TSO, though $C_1$ may complete the store instructions long before $C_2$ performs any load instructions, $C_2$ is still allowed to observe $A = 0, B = 0$ if it can still guarantee that the value of $A$ is as fresh as that of $B$.
 A stronger ordering like this does give some useful guarantees, however, like $B = 1 ==> A = 1$.
-Weak memory models allow much more re-ordering.
-The weakest possible memory model only requires that a program executing on a single core behaves _as if_ it were executed fully in order.
+Weak consistency models allow much more re-ordering.
+The weakest possible consistency model only requires that a program executing on a single core behaves _as if_ it were executed fully in order.
 
 With strong models, the processor implementation must provide certain guarantees for behaviour.
 With weak models, more of that responsibility falls on the programmer.

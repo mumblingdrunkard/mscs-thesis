@@ -1,13 +1,13 @@
 == Abstractions and Implementations
 
-Everything is an _abstraction_.
-There are multiple layers of abstraction.
+Most everything in the field of computing an _abstraction_.
+There are multiple _layers_ of abstraction.
 There are contracts/interfaces between those layers, specifying a common language that the layer above speaks, and that the layer below understands.
-When programming, a programmer is describing a program in a defined language.
+A programmer describes a program in a defined language.
 The language standard defines how parts of the language affect an _abstract machine_.
 
-Programs are written with _intention_ and are written for _machines_.
-The fundamental job of a compiler or interpreter is to take the source code and transform it into a different form that is executable on a _target machine_ while preserving the behaviour of the program as it would have executed on the abstract machine.
+Programs are written with _intent_ and are written for _machines_.
+The fundamental job of a compiler or interpreter is to take the source code and transform it into a different form that is executable on a _target machine_ while preserving the behaviour of the program (the intention) as it would have executed on the abstract machine.
 
 This target machine is no different from the abstract machine:
 The interface of the target machine is defined by a document that specifies a language---instructions and instruction encodings---and the effects that this language has on the state of the machine.
