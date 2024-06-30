@@ -35,3 +35,4 @@ Said in a different way, once the real address is generated, the predicted addre
 
 They @bib:doppelganger further propose to merge the predictor with the one found in the L1 data prefetcher to further save on implementation costs.
 This is only mentioned in passing and is not explored deeply in the paper.
+Instead of predicting the next access, the 

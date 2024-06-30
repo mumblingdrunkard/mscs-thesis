@@ -29,9 +29,45 @@ The two other types of dependencies are _write-after-write_ (WAW) and _write-aft
 These are termed _false dependencies_ and arise when a later instruction writes to a register that is used---read, or written---by an earlier instruction.
 Naively allowing the later instruction to execute first would leave the value in the register mangled as the earlier value would eventually overwrite the later value, or the earlier instruction would use a value produced by a later instruction.
 
+=== A High-Level Overview
+
+@fig:ooo-architecture shows a high-level overview of the various pieces that go into an OoO processor.
+
+#figure(
+  ```monosketch
+                   ┌────────┬───┐        
+                   │        │ROB├───────┐
+                   │   ┌────▶──▲┘       │
+                   │ ┌ ┼ ─ ─ ─ ┼ ─ ─ ─ ┐│
+  ┌──┐ ┌──┐ ┌──┐ ┌─▼┐  │┌──┐ ┌─┴┐ ┌───┐ │
+  │I$├─▶IF├─▶ID├─▶RR├┼─┴▶IQ├─▶FU◀─▶MEM│││
+  └──┘ └─▲┘ └──┘ └──┘   └─▲┘ └┬┬┘ └───┘ │
+         └───────────┼────┼───┘│       ││
+                          │  ┌─▼─┐      │
+                     │    └──┤PRF◀─────┼┘
+                             └───┘       
+                     └ ─ ─ ─ ─ ─ ─ ─ ─ ┘ 
+                        Out-of-order
+  ```,
+  caption: [High-level overview of an out-of-order processor architecture],
+  kind: image,
+)<fig:ooo-architecture>
+
+The different parts are 
+- the instruction-cache `I$`, 
+- instruction fetch `IF` and instruction decode `ID` as seen earlier,
+- register-rename `RR`,
+- issue-queue `IQ`,
+- re-order buffer `ROB`,
+- functional units `FU`,
+- physical register file `PRF`, and
+- the memory `MEM`.
+
+The various components are described in more detail further on.
+
 === Register Renaming
 
-_Register renaming_ is an important piece of the puzzle that enables OoO execution.
+_Register renaming_ (RR) is an important piece of the puzzle that enables OoO execution.
 Register renaming removes false dependencies from the instruction stream by using a new physical location each time an instruction would write to a register.
 
 Register renaming uses a _physical register file_ (PRF) that is different from the register file defined by the ISA.
@@ -49,24 +85,30 @@ Often, the PRF is several times larger than the ARF, depending on how many instr
 
 === Frontend, Backend, and Commit
 
-OoO processors are usually discussed in terms of an InO _frontend_ that fetches instructions, decodes them, renames the architectural registers, and sends them on to the _backend_ as uOPs.
-The frontend also contains circuitry to predict branches.
+OoO processors are usually discussed in terms of an InO _frontend_ that fetches instructions, decodes them, renames the architectural registers, and dispatches them to the OoO _backend_ as uOPs.
 
-The backend consists of _issue queues_ (IQ), _functional units_ (FU), and the _re-order buffer_ (ROB).
+The backend consists of one or more IQs, FUs, the PRF, and the ROB.
 The ROB contains the instructions/uOPs in the order they entered the frontend.
 The IQs contain _slots_ in which the uOPs wait.
 For example, the physical registers that a uOP depends upon may not yet have its value written; the value is not ready.
 The job of the IQ slot is to wait for the dependencies to become ready, possibly fetching and storing the values temporarily.
-When all dependencies are available, the uOP is ready to be _issued_ (sent) to an appropriate FU.
+When all dependencies are available, the uOP is ready to be _issued_ (sent) to one or more appropriate FUs.
 
-There are several FUs in an OoO processor.
+There are several FUs in an OoO processor just like there are in an InO processor.
+The difference is that FUs in InO processors are all in the same stage and thus cannot be utilised in the same cycle.
+Thus, most of the FUs in an InO processor go unused for most of the cycles.
 There may multiple ALU-like units containing various circuits for performing arithmetic.
 There may be _address generation units_ (AGU) whose sole purpose is to calculate the addresses used by memory operations.
-When FUs produce results, they may be passed on to other units for further processing, or they may be completed, in which case they are written back to the PRF and the corresponding entry in the ROB is marked as completed.
+
+FUs can produce results instantly (in the same cycle), or they can take many cycles for a single uOP.
+FUs that take many cycles may re-use the same inner parts in multiple of the cycles, meaning the FU cannot process more than one uOP at a time, or it may itself be pipelined, using new components in each cycle.
+
+When FUs produce results, the results may be passed on to other units for further processing, or they may be completed, in which case they are written back to the PRF and the corresponding entry in the ROB is marked as completed.
 
 The ROB has a _head-_ and a _tail_-end.
 uOPs enter the ROB at the tail-end.
 As uOPs at the head-end finish, they _commit_ and the head moves toward the tail.
+When instructions commit, the 
 It is only after committing that instructions are truly reflected in the architectural state.
 Commit happens in-order because the ROB is in-order.
 Up until that point, their results may be _rolled back_ (undone), which can be necessary in the case of exceptions or mispredictions.

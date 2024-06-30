@@ -15,4 +15,4 @@
   name: "Doppelganger Loads in Hardware"
 )
 
-#let font = "New Computer Modern"
+#let font = ""

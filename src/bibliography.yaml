@@ -38,6 +38,15 @@ bib:vhdl-standard:
     value: "https://ieeexplore.ieee.org/servlet/opac?punumber=8938194"
     date: 2024-06-02
 
+bib:spec-cpu:
+  type: web
+  title: "SPEC CPU Benchmark Suites"
+  publisher: "Standard Performance Evaluation Corporation"
+  date: 2021-12
+  url:
+    value: "https://www.spec.org/cpu/"
+    date: 2024-06-29
+
 bib:systemverilog-standard:
   type: book
   title: "1800-2023 - IEEE Standard for SystemVerilog--Unified Hardware Design, Specification, and Verification Language"
@@ -67,10 +76,8 @@ bib:banked-register-files:
 bib:nodland-paper:
   type: manuscript
   title: "(Toward) Doppelganger Loads in the Berkeley Out-of-Order Machine"
-  note: "unpublished"
   author:
     - Nodland, Elias
-  date: 2023-12
     
 bib:rfp:
   type: article

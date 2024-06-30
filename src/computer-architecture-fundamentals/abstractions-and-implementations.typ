@@ -2,19 +2,20 @@
 
 Most everything in the field of computing an _abstraction_.
 There are multiple _layers_ of abstraction.
-There are contracts/interfaces between those layers, specifying a common language that the layer above speaks, and that the layer below understands.
+There are contracts/interfaces between those layers, specifying a common _language_ that the layer above speaks, and that the layer below understands.
 A programmer describes a program in a defined language.
 The language standard defines how parts of the language affect an _abstract machine_.
 
 Programs are written with _intent_ and are written for _machines_.
-The fundamental job of a compiler or interpreter is to take the source code and transform it into a different form that is executable on a _target machine_ while preserving the behaviour of the program (the intention) as it would have executed on the abstract machine.
+The fundamental job of a compiler or interpreter is to take the program code and transform it into a different form that is executable on a _target_ machine while preserving the behaviour of the program (the intent) as it would have executed on the abstract machine.
 
 This target machine is no different from the abstract machine:
-The interface of the target machine is defined by a document that specifies a language---instructions and instruction encodings---and the effects that this language has on the state of the machine.
+The interface of the target machine is defined by a document that specifies a language---_instructions_ and instruction _encodings_---and the effects that this language has on the state of the machine.
 This is referred to as the _instruction set architecture_ (ISA).
+When programmers write this language, it is usually in the form of _assembly_ which is a human-readable encoding that has a direct and obvious mapping to the machine version of the same language.
 
 The machine specified by the ISA is an abstraction.
-Computer hardware engineers are tasked with implementing a machine that behaves like this abstract machine.
+Computer hardware engineers are tasked with _implementing_ a machine that behaves like this abstract machine using transistors and wires.
 Different requirements of the hardware and its use-cases will motivate different implementations.
 Some use-cases require low power consumption---others might require the most computing performance possible.
 
@@ -45,7 +46,7 @@ table(
 
 Here, the values 'F' and 'T' stand for "False" and "True", respectively.
 $p$ and $q$ are the inputs and the remaining three columns show the output of three types of gates.
-Logic gates can be arranged in larger circuits.
+Logic gates can be arranged in larger circuits to do more useful work.
 
 ==== Selecting From Several Sources
 
@@ -68,7 +69,9 @@ table(
   [T], [T], [T], [T],
 )})<tab:mux-truth-table>
 
-The basic operation of a mux is that $s = "F" ==> o = p$, and $s = T ==> o = q$.
+The basic operation of a mux is that $s = "F" ==> o = p$, and $s = "T" ==> o = q$.
+In other terms: when $s$ is false, the output is set to the first input and when $s$ is true, the output is set to the second input;
+$s$ _selects_ which input to assign to the output.
 A mux can, as an example, be implemented as $(p "AND" ("NOT" s)) "OR" (q "AND" s)$.
 The unary $"NOT"$-gate simply inverts its input.
 
@@ -79,18 +82,18 @@ It is simple to create a logic circuit that performs, for example, long-addition
 The most basic version is called a _half-adder_ which takes two input bits $a$ and $b$ and sums them up.
 It has two outputs: sum $s = a "XOR" b$, and carry $c = a "AND" b$.
 
-A full-adder is like a half-adder, but it also accounts for a third input bit: carry-in.
+A _full-adder_ is like a half-adder, but it also accounts for a third input bit: carry-in.
 An adder is constructed by chaining full-adders, connecting the carry output of one full-adder into the carry-in of the next.
 
 ==== Circuits with Memory
 
 Logic is useful, but computers require _state_---as in "state of being".
-When building circuits, it is a good idea to ensure the resulting network of gates is a directed acyclic graph (DAG).
+When building circuits, it is a good idea to ensure logic does not directly depend on its own result.
 That is to say: the input of any one gate cannot depend on its own output, directly or transitively; there is no path from the output of the gate back to the input.
 Such a path is called a _combinational loop_ and most tools prevent making them.
 
 An exception is made for the _register_ cell which is constructed by using logic gates that connect back to themselves with positive feedback.
-A register cell stores a value that can be read back out.
+A register cell _stores_ data that can be read back out at a later time.
 It will usually have two inputs: data $d$, and enable $e$.
 The operation of the register cell can be described thus:
 When enable $e$ is true, the data $d$ are stored in the cell.
@@ -135,78 +138,42 @@ This kind of diagram is called a _waveform_.
   kind: image
 )<fig:register-cell-waveform>
 
-The storage element shown here is actually called a _latch_ and it updates continuously while the $w$ and $e$ signals are enabled.
+The storage element shown here is actually called a _latch_ and it updates continuously while the enable signal $e$ is active.
 Another kind of register cell is the _flip-flop_ which can be constructed from two latches where the output of the first one (called the master), is fed into a second (called the slave).
 The enable input of the slave latch $e'$ is the inverted value of the enable input $e$ of the master latch.
 In this way, the master latch can receive an updated value while signal is high, and the slave latch is only updated once the clock signal goes low again.
-
 It is difficult to ensure all latches update at the same time in a reliable manner.
 Because of this, registers are usually implemented using flip-flops to give more tolerance.
 
 ==== Register-Transfer Level
 
-Registers and logic are the basic building blocks of the _register-transfer level_ (RTL).
-This is an abstraction level where circuits are modeled as flows of data between registers.
+Registers and combinational logic are the basic building blocks of the _register-transfer level_ (RTL).
+This is an abstraction level where circuits are modelled as flows of data between registers.
 
 A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all registers in the circuit to ensure a common time for when values change.
 The space between two _rising edges_ (where the signal goes from low to high), is called a _clock cycle_.
-When drawing diagrams, the clock signal is usually left out for brevity.
+When drawing diagrams, the clock signal is often left out for brevity.
 
-// ==== Three-Valued Logic
+=== Elements of an Instruction Set Architecture
 
-// What happens when the register cell in @fig:register-cell-diagram goes from an unpowered state, to a powered one, assuming that the inputs $d$, $w$, and $e$ are all "False"?
-// If the inputs to the NOT-gates also starts out as "False", both will turn on their output, in turn turning off the other output.
-// This is a _race condition_, and it leads to less predictable outcomes.
-// It is unreliable to assume a given value when power is first supplied.
-
-// This could be solved by adding reset logic to every register, but that is a costly solution.
-// Instead, it is sometimes useful to treat the value as an unknown.
-// Introducing "Maybe" as a value gives rise to a three-valued logic.
-// As an example, the truth table in @tab:truth-tables-3vl shows the operation of the AND and OR gates with this three-valued logic.
-
-// #figure(
-//   caption: [Truth-table for OR and AND with three-valued logic],
-//   {
-//     show "F": set text(fill: gray.darken(20%))
-//     show "M": set text(fill: gray.darken(60%))
-//     table(columns: (auto, ) * 4,
-//       $p$, $q$, $p "AND" q$, $p "OR" q$,
-//       [F], [F], [        F], [       F],
-//       [F], [M], [        F], [       M],
-//       [F], [T], [        F], [       T],
-//       [M], [F], [        F], [       M],
-//       [M], [M], [        M], [       M],
-//       [M], [T], [        M], [       T],
-//       [T], [F], [        F], [       T],
-//       [T], [M], [        M], [       T],
-//       [T], [T], [        T], [       T],
-//     )
-//   }
-// )<tab:truth-tables-3vl>
-
-// Three-valued logic is not some sort of standard.
-// Different systems of logic can define different values with different operators entirely.
-// However, for the purposes of indeterminate binary logic, this type of three-valued logic is quite suitable.
-// Notice that in @tab:truth-tables-3vl, changing an incoming 'M' to a 'T' or 'F' will not make an outgoing 'T' or 'F' change.
-
-=== Components of an Instruction Set Architecture
-
-An ISA defines an abstract computer, the instructions it executes, and what the effects of those instructions are.
-In this section, we cover the most basic components of such a specification.
+An ISA defines an abstract machine, the instructions it executes, and what the effects of those instructions are.
+That is, an implementation should behave as if there is some set of resources, and instructions that use and modify those resources.
+In this section, we cover the most basic elements of such a specification.
 Most ISA documents will specify all of these concepts.
 
 ==== Memory Space
 
-The memory space is most often defined as an array of bytes (groups of eight bits).
-Values can be loaded from memory at an _address_ which is an index into this large array.
-Certain areas of this memory may be used for storing things like instructions and data, others can be mapped to inputs and outputs of various devices.
+Values can be loaded from or stored to memory at an _address_ which is an index into a large array of values.
+Different ranges of addresses may be mapped to different types of memory.
+The main memory stores program data and instructions and has no side-effects---i.e. using load and store instructions on the main memory has no other observable effect than to read or write those values.
+Other address ranges may be mapped to various devices and can have side-effects.
 
-ISAs designed for running operating systems usually contain specifications for how _memory virtualisation_ works.
+ISAs designed for running operating systems usually contain specifications for _memory virtualisation_.
 Virtualised memory uses _virtual addresses_ and a _translation_ scheme to translate from these virtual addresses to the "real" physical addresses.
 This way, individual applications can access the same virtual address, but refer to different values.
 Thus, an operating system can, for example, start two instances of the same program without them interferring with each other's values.
 
-Virtual memory is often handled at the granulaity of _pages_ where a fixed size section of virtual memory is mapped continuously to an equally sized section in physical memory.
+Modern virtual memory is handled at the granulaity of _pages_ where a fixed size virtual address range is mapped continuously to an equally sized section in physical memory.
 Pages that are adjacent---according to their addresses---in virtual memory are not necessarily adjacent in physical memory.
 
 Virtual memory is transparent.

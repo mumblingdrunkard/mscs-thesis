@@ -1,6 +1,7 @@
 = Modern Hardware Design
 
-Throughout this thesis, we discuss relations between abstract representations of circuits and their implementation as transistors and wires.
+Throughout this thesis, we discuss the relationships between abstract representations of circuits and their implementation as transistors and wires.
+This chapter briefly describes a standard flow of modern hardware development.
 
 == Register-Transfer Level and Hardware Description Languages
 
@@ -71,6 +72,7 @@ The elements described here come from SystemVerilog.
 
 It has to be noted that SystemVerilog is a high-level language.
 Logic and flip-flops are _inferred_ and are not explicitly declared by the programmer.
+The programmer only controls how the circuit should behave and not how the final circuit has to be implemented.
 
 First off, the code in @lst:systemverilog-example declares a module called `alu` that has six inputs: `clk`, `nrst`, `in_a`, `in_b`, `in_op`, and `in_valid`.
 The types of these inputs can be user-defined like `word_t` and `op_t` or one of the primitive types like `logic`.
@@ -134,7 +136,8 @@ When the control signal is low, the mux selects the top output, and when the sig
 Notice that the value `'x` is assigned to `result` in the default case.
 This is not a "real" value and is treated as "unknown" or "invalid".
 When assigning `'x` like this, the programmer says that they do not care about the result in that case.
-All values must eventually resolve to high or low in a physical implementation, but "don't care" values convey the semantic meaning that in this case, the implementation of the circuit is allowed to do anything.
+All values must eventually resolve to high or low in a physical implementation; `x` is thus an unsynthesisable value as it does not actually exist as a value.
+"Don't care" values convey the semantic meaning that, in this case, the implementation of the circuit is allowed to do anything.
 This liberty has been taken by merging the `+` case with the default case.
 
 Such values are often referred to as "maybe", "don't care", or "unknown".
@@ -148,22 +151,22 @@ In this case, it may be better to explicitly specify that the default case shoul
 
 ==== Latches and Flip-Flops
 
-As mentioned `always_ff` implies that the logic contained inside should require flip-flops for the logic.
+The implication of `always_ff` is that the logic contained inside should require flip-flops for the logic.
 Non-blocking assignments can be implemented using flip-flops as described in the previous chapter.
 By using a flip-flop style circuit, the output is only updated once the clock-signal goes low again.
 
-Latches are _inferred_ by verilog when a signal is not assigned in all possible cases.
+Latches are inferred at synthesis when a signal is not assigned in all possible cases.
 For example if the `case`-statement was missing cases and did not have a `default` case, the value of `result` would be indeterminate.
 SystemVerilog is defined such that variables retain their previously assigned value unless updated.
 A latch can be used to accomplish this and only enable the latch when there is an updated value available.
 A latch continuously reads and outputs the input value while the enable-signal is active.
-However, this behaviour is commonly undesirable as it is often unintentional and adds more delay, which is why the `always_comb` block exists.
+However, this behaviour is commonly undesirable as it is often unintentional and adds more delay on account of needing to pass through a latch, which is why the `always_comb` block exists to warn the programmer.
 If something inside an `always_comb` block results in an inferred latch, the tooling for the language gives an error or a warning.
 
 === Scaling Circuits
 
-With HDLs, it may be easy to forget that the circuit is supposed to go through synthesis.
-For example: variable indexing (where the index might change every cycle) in arrays requires a mux network for each place the array is indexed.
+With high-level HDLs, it may be easy to forget that the circuit is destined for synthesis.
+For example: variable indexing (where the index might change every cycle) in arrays requires a network of muxes for each place the array is indexed.
 Adding more ports to read from an array of values can be even more expensive as it complicates wiring.
 
 This is more true for arrays of stored values (large flip-flop structures).
@@ -174,27 +177,34 @@ Naive scaling is expensive and much research has been done to reduce the number 
 == Testing Designs
 
 There are several ways to go about testing hardware designs.
-Unsynthesisable features of HDLs are included because they are useful for testing circuit behaviour.
+Unsynthesisable features of HDLs are included because they are useful for testing and debugging circuit behaviour.
 
 === Simulation of Register-Transfer Level
 
 One alternative is to run the code in a simulator.
 A simulator takes the code and runs it according to the lanugage standard.
 A popular simulator is _Verilator_ @bib:verilator which accepts SystemVerilog and translates it to a multithreaded model that can be executed on the host system.
+The freedom of a software simulator allows for great support for various testing and debugging.
 
 === Field-Programmable Gate Arrays
 
 When the design has been tested in a simulator and correct behaviour is confirmed, it is common to prototype the circuit on a _field-programmable gate array_ (FPGA).
-An FPGA is a large canvas of _look-up tables_ (LUT) that can be programmed to provide a given output for any given input.
+An FPGA is a large canvas of _look-up tables_ (LUT) and various other components on a _fabric_.
+The LUTs can be programmed to provide a given output for any given input.
 The simplest possible LUT has two inputs and a single output.
 Within it are four register cells that can be selected by using the two inputs as an address.
 The values of the four register cells can be programmed to any values.
-Wires between the LUTs and other components like registers can be programmed in a similar fashion to decide which components are connected together.
 A two-input LUT can act as any logic gate by programming it with the same behaviour as the appropriate truth table.
+The fabric consists of wires between the components and can be programmed in a similar fashion to decide which components are connected together.
 
 With a proper bit-stream and enough components, an FPGA can be programmed to act like any circuit.
 FPGAs are much faster than simulators, and even though they are slower than creating an integrated circuit, they are still representative of metrics like IPC.
 
+An FPGA is less flexible than a simulator in that the code has to go through synthesis and unsynthesisable features therefore become unavailable.
+Additionally, FPGAs are less flexible in how certain language elements are implemented.
+This means that some features that are synthesisable in one technology may be unsynthesisable in a different technology.
+One example is tri-state buffers that allow an output to both source and sink current, or be electrically disconnected.
+FPGAs usually have tri-state ports on the chip interface (the input and output ports to the chip) and generally don't support tri-state logic internally, which then has to be implemented some other way.
 
 == Logic Synthesis: From Register-Transfer Level to Logic Gates
 

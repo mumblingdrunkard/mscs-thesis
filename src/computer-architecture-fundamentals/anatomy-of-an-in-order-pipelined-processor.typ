@@ -5,7 +5,7 @@ This first major optimisation of the microarchitecture is based on the observati
 This introduces the concept of the _pipelined processor_.
 A classic processor pipeline may look like: instruction fetch (IF), instruction decode (ID), operand fetch (OF), execute (EXE), memory access (MEM), and writeback (WB).
 
-Each stage focuses on a specific stage of performing an instruction.
+Each stage focuses on a specific stage of performing an instruction, like an assembly line where each step adds a new part to the product.
 IF fetches the instruction from memory.
 ID decodes the instruction and determines which control signals to set later in the pipeline.
 OF fetches the values to be used later in the pipeline.
@@ -13,7 +13,7 @@ EXE performs the operation on some of the values.
 MEM performs memory access with an address computed in EXE.
 WB writes the values back to the register file so that they can be used by later instructions.
 
-Between each stage, there is a big register called a _pipeline register_ that holds values and control signals.
+Between each stage, there is a big register called a _pipeline register_ that holds values and control signals that tells the various stages what work to perform.
 The values come from outputs of previous stages, and are used as inputs in the current stage.
 Each stage takes only one cycle to complete 
 

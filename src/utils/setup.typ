@@ -34,6 +34,7 @@
   })
 
   show figure.where(kind: table): set figure.caption(position: top)
+  // show figure.caption: set text(size: 9pt)
   
   set math.equation(numbering: num => {
     // Get heading numbering at this point
@@ -146,8 +147,8 @@
     }
   })
 
-  show raw.where(block: true): set text(font: "DejaVu Sans Mono", size: 7pt)
-  set raw(theme: "../MultiMarkdown.tmTheme")
+  show raw.where(block: true): set text(font: "DejaVu Sans Mono", size: 8pt)
+  //set raw(theme: "../MultiMarkdown.tmTheme")
   show raw.where(block: true): set par(leading: .4em)
 
   include "../frontmatter/abstract.typ"

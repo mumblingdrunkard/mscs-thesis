@@ -27,6 +27,8 @@ Data that have been used previously are more likely to be re-used---called _temp
 Programs also exhibit _spatial locality_: data that lie close to previously used data are more likely to be requested in the future.
 Computer processor caches exploit this by not only fetching the requested datum, but surrounding data as well.
 
+Generally, caching is only employed for the address range that covers main memory as it is difficult or impossible to uphold any semblance of sanity while caching accesses with side-effects.
+
 === Cache Hierarchies
 
 Caches are arranged in hierarchies, with the smallest, fastest caches placed closest to the core while the larger, slower caches are placed further away---sometimes on a different chip entirely.
@@ -101,13 +103,15 @@ $A$ and $B$ are values stored in memory.
 These values are both set to 0 before execution starts.
 A consistency model says which possible values Core 2 ($C_2$) can observe for $A$ and $B$, and what the value of one implies about the value of the other.
 
-#figure(grid(columns: (auto, ) * 2, gutter: 60pt, [
+#figure(grid(columns: (auto, ) * 2, inset: 5pt, [
   ```
   // Core 1
   store A 1
   store B 1
   ```
-], [
+], 
+grid.vline(),
+[
   ```
   // Core 2
   load B

@@ -50,8 +50,8 @@ A current flows within the circuit simply because there is an electron supply an
 This is problematic because more power means more heat.
 When the processor becomes too hot, the materials within it start breaking down.
 
-To meet performance goals, companies started turning up frequencies more than Dennard Scaling allowed for.
-To increase the frequency beyond the max frequency, the voltage must be tuned up to decrease the delays.
+To meet performance goals, companies started turning up frequencies more than Dennard Scaling allowed for while staying within the same power budgets.
+To increase the frequency beyond the "original" max frequency, the voltage must be tuned up to decrease the delays by saturating capacitances faster.
 This causes the power output to scale with the cube of the frequency increase, which has necessitated more powerful cooling to keep up with the increased heat output.
 
 === Scaling Horizontally
