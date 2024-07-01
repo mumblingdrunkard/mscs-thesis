@@ -453,3 +453,30 @@ bib:retiming:
   parent:
     title: "Algorithmica (1991)"
     publisher: Springer-Verlag
+
+bib:riscv-tests:
+  type: web
+  title: "riscv-software-src/riscv-tests/"
+  author:
+    - riscv-software-src
+  date: 2017
+  url:
+    value: https://github.com/riscv-software-src/riscv-tests/tree/master/benchmarks
+    date: 2024-06-30
+  
+bib:dhrystone:
+  type: article
+  title: "Dhrystone: a synthetic systems programming benchmark"
+  author:
+    - Weicker, Reinhold P.
+  date: 1984-10-01
+  url:
+    value: https://doi.org/10.1145/358274.358283
+    date: 2024-06-30
+  doi: 10.1145/358274.358283
+  parent:
+    title: "Communications of the ACM"
+    volume: 27
+    issue: 10
+    publisher: Association for Computing Machinery
+  

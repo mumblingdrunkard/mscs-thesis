@@ -1,6 +1,9 @@
+#import "../utils/utils.typ": *
+
 = Methodology and Results
 
-Here, we describe our approach to gathering the results presented in the next chapter.
+Here, we describe our approach to gathering the results for the implementation and list these results.
+The results are interpreted and discussed in the next chapter.
 
 == Running Programs and Extracting Results
 
@@ -12,7 +15,7 @@ We also do not have straightforward access to a RISC-V version of the SPEC CPU s
 
 Because of these issues, we have decided to use a software simulator built with Verilator to run a small suite of programs that complete within a reasonable time on the software simulator.
 
-=== Programs
+=== About the Programs
 
 The Chipyard project includes a number of test-applications to verify that a RISC-V implementation is behaving properly.
 These programs are not intended for such benchmarking, but can at least serve as sanity checks that the implementation is not broken.
@@ -22,6 +25,20 @@ The programs we have available are located under `.conda-env/riscv-tools/riscv64
 Although the directory is called "benchmarks", they are not actually _performance benchmarks_, but we have used them for rudimentary verification and performance testing.
 
 The nice thing about these programs is that they include testing of the outputs, meaning if they pass, we can be more confident that the behaviour of the core is unchanged.
+The downside of these benchmarks is that they are not intended to measure performance and the results we se here may not be representative of real programs, making it close to pointless to discuss metrics like mean speedup.
+
+The programs themselves are given short descriptions in their source code, a summary of which follows here @bib:riscv-tests.
+- *vvadd* adds elements of two vectors and stores the results in a third vector,
+- *median* calculates the median of each group of three elements in a vector,
+- *rsort* is a sorting program,
+- *spmv* performs multiplication on sparse matrices,
+- *multiply* is similar to *vvadd*, but uses multiplication instead of addition,
+- *qsort* is another sorting program,
+- *dhrystone* is the classic dhrystone synthetic benchmark @bib:dhrystone, and
+- *towers* solves the classic towers of hanoi puzzle using a recursive algorithm.
+
+All of these programs run in "bare-metal" mode, meaning there is no virtual memory.
+Virtual memory might change results by needing to deal with things like TLB misses and 
 
 == Evaluating Predictor Performance
 
@@ -120,3 +137,85 @@ Without it, loads have to be written back to the PRF and IQ slots have to react 
 
 Finally, we have tested the system with and without address prediction activated.
 With these two base systems, and the two on/off variables of speculative load wakeups and address prediction, we end up with 8 different configurations to gather results for.
+
+== Results
+
+We list the results for different configurations.
+
+=== Instructions Per Cycle
+
+@tab:smallboom-ipc shows the different tests and their IPC when run on the SmallBoomConfig core configuration.
+Column *base-no-spec-ld* is our baseline that we want to beat,
+*base* is the normal configuration that has speculative load wakeups enabled,
+*ldpred-no-spec-ld* adds address prediction to the *base-no-spec-ld* configuration, and *ldpred* uses load address prediction in combination with speculative load wakeups.
+@tab:smallboom-ipc-relative lists the difference for each test from the *base-no-spec-ld* config as a percentage change.
+
+#let smallboom = csv("./data/smallboom.csv")
+
+#figure(
+  caption: "SmallBoomConfig IPC results with different configurations",
+  table(columns: (auto, ) * 5,
+    [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
+    ..smallboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
+      let base-no = calc.round(float(base-no), digits: 5)
+      let base = calc.round(float(base), digits: 5)
+      let ldpred-no = calc.round(float(ldpred-no), digits: 5)
+      let ldpred = calc.round(float(ldpred), digits: 5)
+      (name, base-no, base, ldpred-no, ldpred).map((v) => [#v])
+    }).flatten(),
+  )
+) <tab:smallboom-ipc>
+
+#figure(
+  caption: "SmallBoomConfig IPC results with different configurations as relative to the baseline without speculative load wakeups, expressed as a percentage",
+  table(columns: (auto, ) * 5,
+    [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
+    ..smallboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
+      let base-no = float(base-no)
+      let base = calc.round((float(base)/base-no - 1) * 100, digits: 5)
+      let ldpred-no = calc.round((float(ldpred-no)/base-no - 1) * 100, digits: 5)
+      let ldpred = calc.round((float(ldpred)/base-no - 1) * 100, digits: 5)
+      (name, 0, base, ldpred-no, ldpred).map((v) => [#v])
+    }).flatten(),
+  )
+) <tab:smallboom-ipc-relative>
+
+Similarly, @tab:mediumboom-ipc and @tab:mediumboom-ipc-relative contain the absolute IPC and relative difference to *base-no-spec-ld* for the MediumBoomConfig.
+
+#let mediumboom = csv("./data/mediumboom.csv")
+
+#figure(
+  caption: "MediumBoomConfig IPC results with different configurations",
+  table(columns: (auto, ) * 5,
+    [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
+    ..mediumboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
+      let base-no = calc.round(float(base-no), digits: 5)
+      let base = calc.round(float(base), digits: 5)
+      let ldpred-no = calc.round(float(ldpred-no), digits: 5)
+      let ldpred = calc.round(float(ldpred), digits: 5)
+      (name, base-no, base, ldpred-no, ldpred).map((v) => [#v])
+    }).flatten(),
+  )
+) <tab:mediumboom-ipc>
+
+#figure(
+  caption: "MediumBoomConfig IPC results with different configurations as relative to the baseline without speculative load wakeups, expressed as a percentage",
+  table(columns: (auto, ) * 5,
+    [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
+    ..mediumboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
+      let base-no = float(base-no)
+      let base = calc.round((float(base)/base-no - 1) * 100, digits: 5)
+      let ldpred-no = calc.round((float(ldpred-no)/base-no - 1) * 100, digits: 5)
+      let ldpred = calc.round((float(ldpred)/base-no - 1) * 100, digits: 5)
+      (name, 0, base, ldpred-no, ldpred).map((v) => [#v])
+    }).flatten(),
+  )
+) <tab:mediumboom-ipc-relative>
+
+=== Accuracy and Coverage
+
+#todo[TODO rerun tests with proper prints]
+
+=== Time Until Needed
+
+#todo[TODO rerun tests with proper prints]

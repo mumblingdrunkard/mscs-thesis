@@ -98,3 +98,7 @@ We may mention other components that are not fully explained, but their naming s
 ==== Deciding Which Operations to Perform
 
 ==== Tracking Load Instructions
+
+=== Data Cache
+
+==== Miss Status Holding Registers

@@ -5,7 +5,8 @@
 #let setup = body => {
   set text(size: 10pt)
   set text(font: config.font)
-  set par(justify: true, linebreaks: "optimized")
+  set par(justify: true)
+  set par(linebreaks: "optimized")
   //set par(first-line-indent: 1em, leading: .65em)
   //show par: set block(spacing: .65em)
   
