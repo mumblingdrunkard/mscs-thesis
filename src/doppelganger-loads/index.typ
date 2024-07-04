@@ -8,23 +8,28 @@ At its core, doppelganger loads attempt to regain some of the MLP that is lost w
 
 To explain doppelganger loads, it is useful to first explain _register file prefetching_ (RFP).
 The increasing complexity of processors has necessitated deeper L1 cache pipelines, causing relative access latencies to increase to as much as 5 cycles.
-One of the key observations by the team behind RFP is that performance could be improved as much as 9% by making L1 access appear like accessing the register file @bib:rfp.
+One of the key observations by the team behind RFP is that performance could be improved as much as 9% by making L1d access appear like accessing the register file on a modern design with a 5 cycle L1d access latency @bib:rfp.
 
 RFP recognises that by using a predictor to guess which addresses are going to be accessed by individual load instructions, the value can be read from L1 cache before the real address is generated.
-The prefetched values are put in the correct location in the register file and are marked as prefetches until the address is confirmed, at which point dependent instructions can use the value immediately and do not have to wait an additional 5 cycles after the address has been generated, nor for the value to become available in the register file as it is already there.
+The prefetched values are put in the correct location in the register file but dependents are not issued until the address is confirmed, at which point dependent instructions can use the value immediately and do not have to wait an additional 5 cycles after the address has been generated to perform the cache access, nor for the value to become available in the register file as it is already there.
 
 With this kind of setup, the team achieved a 3.1% performance improvement on a modern processor, and as much as a 5.7% performance improvement in a "futuristic" twice-as-wide core design with increased L1 bandwidth @bib:rfp.
 
 Note that this is different from the concept of _value prediction_ (VP) in which dependent instructions are executed before their dependencies are definitely known.
 RFP does not allow dependent instructions to execute until the prediction is known to be correct (correct address and not violating any ordering requirements).
 
-== Register File Prefetching is Safe Under Some Conditions
+== Doppelganger Loads are Safe
 
-What Kvalsvik et al. recognise in @bib:doppelganger is that by training a load address predictor on committed loads only and issuing loads early using predicted addresses, it is possible to recover some of the MLP that is lost when using secure speculation schemes.
-This is because what some of these schemes do is essentially making L1 cache accesses look even slower.
+What Kvalsvik et al. recognise in @bib:doppelganger is that by training a load address predictor only on committed loads and issuing loads early using predicted addresses, it is possible to recover some of the MLP that is lost when using secure speculation schemes.
 
 Because it is only trained on committed loads, speculative cache accesses using these predictions only reveal information about past correct execution, which is already considered leaked under the appropriate threat models.
-There are some extra edge-cases that have to be handled carefully but the approach is generally safe.
+There are some extra edge-cases that have to be handled carefully depending on the underlying secure speculation scheme but the approach is generally safe.
+
+Accesses based on these predictions are dubbed _doppelgangers_ or _doppelganger loads_ and stand in for a load to the real address until the real address is calculated.
+
+== Doppelganger Loads Architecture
+
+== Doppelganger Loads Performance
 
 == The Cost of Doppelganger Loads
 

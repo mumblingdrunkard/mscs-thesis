@@ -480,3 +480,59 @@ bib:dhrystone:
     issue: 10
     publisher: Association for Computing Machinery
   
+
+bib:best-offset:
+  type: article
+  title: Best-offset hardware prefetching
+  author:
+    - Michaud, Pierre
+  date: 2016-03-12
+  url: 
+    value: https://ieeexplore.ieee.org/document/7446087
+    date: 2024-06-30
+  serial-number:
+    doi: 10.1109/HPCA.2016.7446087
+    eisbn: 978-1-4673-9211-2
+    issn: 2378-203X 
+  parent:
+    title: 2016 IEEE International Symposium on High Performance Computer Architecture
+    publisher: IEEE
+    
+bib:dcpt:
+  type: article
+  title: Storage Efficient Hardware Prefetching using Delta-Correlating Prediction Tables
+  author:
+    - Grannaes, Marius
+    - Jahre, Magnus
+    - Natvig, Lasse
+  date: 2011-01
+  url:
+    value: https://jilp.org/vol13/v13paper2.pdf
+    date: 2024-07-03
+  parent:
+    title: Journal of Instruction-Level Parallelism 13
+
+bib:clash:
+  type: thesis
+  title: "CλasH: From Haskell To Hardware"
+  author:
+    - Baaij, Christiaan
+  date: 2009-12
+  url: 
+    value: http://essay.utwente.nl/59482/1/scriptie_C_Baaij.pdf
+    date: 2024-06-27
+
+bib:hardcaml:
+  type: article
+  title: "Hardcaml: An OCaml Hardware Domain-Specific Language for Efficient and Robust Design"
+  author:
+    - Ray, Andy
+    - Devlin, Benjamin
+    - Quah, Fu Yong
+    - Yesantharao, Rahul
+  publisher: "Jane Street"
+  date: 2023-12-20
+  url: 
+    value: https://arxiv.org/html/2312.15035v1
+    date: 2024-06-27
+ 

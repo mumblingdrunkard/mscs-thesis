@@ -64,6 +64,8 @@ The different parts are
 - the memory `MEM`.
 
 The various components are described in more detail further on.
+This overview hides a lot of complexity---especially in the FUs.
+One important FU is the unit for managing memory accesses.
 
 === Register Renaming
 
@@ -113,6 +115,16 @@ It is only after committing that instructions are truly reflected in the archite
 Commit happens in-order because the ROB is in-order.
 Up until that point, their results may be _rolled back_ (undone), which can be necessary in the case of exceptions or mispredictions.
 In practice, the ROB is implemented as a circular buffer.
+
+=== Memory Access Unit
+
+As mentioned, the FU for accessing memory is hidden in the high-level overview of @fig:ooo-architecture.
+This unit will usually manage structures like the L1d and the _translation look-aside buffer_ (TLB).
+The TLB is responsible for translating virtual addresses to physical addresses.
+It is essentially a small cache for address translations.
+The tables used for translation are stored in memory and the processor would need to make additional memory requests for all virtual memory accesses were it not for the TLB.
+
+In addition to these structures, the memory access unit contains structures for tracking requests to the L1d like loads and stores.
 
 === Unlocking Memory-Level Parallelism
 

@@ -1,5 +1,5 @@
 #let authors = (
-  (name: "Elias Nodland", email: "eliasnod@stud.ntnu.no"), 
+  (name: "Elias Nodland", email: "elias.nodland@protonmail.com"), 
   (name: "Amund Bergland Kvalsvik (Advisor)", email: "amund.kvalsvik@ntnu.no"), 
   (name: "Magnus Själander (Advisor)", email: "magnus.sjalander@ntnu.no"),
 )

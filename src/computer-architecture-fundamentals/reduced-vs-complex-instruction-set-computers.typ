@@ -26,6 +26,6 @@ The fast subset almost resembles a RISC in how it is used.
 Maybe the real RISC is the CISC we made along the way.
 
 Our own interpretation of the subject is that anything that has an obvious path to implementation in a typical state of the art OoO processor can be considered RISC.
-RISC-V extensions add hundreds of extensions for things like vector processor, bit-manipulation, and such, but implementation is relatively clear and straightforward.
+RISC-V extensions add hundreds of instructions for things like vector processing, bit-manipulation, hardware-accelerated cryptography, and more, but implementation is relatively clear and straightforward.
 Another way RISC and CISC ISAs are typically different is in instruction encodings.
 RISC architectures have traditionally opted for fixed-size instructions which are much simpler for the processor to decode.

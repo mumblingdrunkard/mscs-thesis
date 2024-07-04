@@ -212,8 +212,8 @@ As shown in @fig:case-synthesis, translation from HDL to a circuit can be simple
 This is the job of synthesis.
 The abstract circuit behaviour described by the HDL must be translated to a concrete implementation in terms of logic gates made from transistors.
 
-Logic synthesis tools will use larger primitives with various different implementations depending on requirements for timing.
-A physically larger circuit can have a shorter delay#footnote[See carry look-ahead adders.].
+Logic synthesis tools will use primitives with various different implementations depending on timing requirements.
+A physically larger circuit can often have a shorter delay#footnote[See carry look-ahead adders.].
 
 === Circuit Optimisation
 

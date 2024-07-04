@@ -1,9 +1,16 @@
 == Abstractions and Implementations
 
-Most everything in the field of computing an _abstraction_.
+#quote(block: true, [
+    If you wish to makke an apple pie from scratch, you must first invent the universe.
+  ],
+  attribution: "Carl Sagan",
+)
+
+We take the above quote as a reflection on how easy it often is to forget the complexities we deal with when developing hardware.
+Most everything in the field of computing is an _abstraction_.
 There are multiple _layers_ of abstraction.
-There are contracts/interfaces between those layers, specifying a common _language_ that the layer above speaks, and that the layer below understands.
-A programmer describes a program in a defined language.
+There are _contracts/interfaces_ between those layers, specifying a common _language_ that the layer above speaks, and that the layer below understands.
+_A programmer describes a program in a defined language._
 The language standard defines how parts of the language affect an _abstract machine_.
 
 Programs are written with _intent_ and are written for _machines_.
@@ -46,7 +53,7 @@ table(
 
 Here, the values 'F' and 'T' stand for "False" and "True", respectively.
 $p$ and $q$ are the inputs and the remaining three columns show the output of three types of gates.
-Logic gates can be arranged in larger circuits to do more useful work.
+Logic gates can be arranged in larger circuits to perform more complex operations.
 
 ==== Selecting From Several Sources
 
@@ -139,9 +146,9 @@ This kind of diagram is called a _waveform_.
 )<fig:register-cell-waveform>
 
 The storage element shown here is actually called a _latch_ and it updates continuously while the enable signal $e$ is active.
-Another kind of register cell is the _flip-flop_ which can be constructed from two latches where the output of the first one (called the master), is fed into a second (called the slave).
-The enable input of the slave latch $e'$ is the inverted value of the enable input $e$ of the master latch.
-In this way, the master latch can receive an updated value while signal is high, and the slave latch is only updated once the clock signal goes low again.
+Another kind of register cell is the _flip-flop_ which can be constructed from two latches where the output of the first one (called the primary), is fed into a second (called the secondary).
+The enable input of the secondary latch $e'$ is the inverted value of the enable input $e$ of the primary latch.
+In this way, the primary latch can receive an updated value while signal is high, and the secondary latch is only updated once the enable signal goes low again.
 It is difficult to ensure all latches update at the same time in a reliable manner.
 Because of this, registers are usually implemented using flip-flops to give more tolerance.
 
@@ -150,7 +157,7 @@ Because of this, registers are usually implemented using flip-flops to give more
 Registers and combinational logic are the basic building blocks of the _register-transfer level_ (RTL).
 This is an abstraction level where circuits are modelled as flows of data between registers.
 
-A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all registers in the circuit to ensure a common time for when values change.
+A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all flip-flaps in the circuit to ensure a common time for when values change.
 The space between two _rising edges_ (where the signal goes from low to high), is called a _clock cycle_.
 When drawing diagrams, the clock signal is often left out for brevity.
 
@@ -217,7 +224,7 @@ This is useful for function calls and returns.
 
 Along with instructions and their effects, the ISA document must also specify what instructions "look like" to the processor: which sequences of bits and bytes correspond to each instruction.
 
-=== A Basic Implementation
+=== _An_ Implementation
 
 @fig:basic-computer shows an implementation of a compute-capable architecture.
 Components with double borders are registers (storage), while those with a single border perform logic.
@@ -288,7 +295,7 @@ And so it continues.
 Notice that even a basic instruction like addition requires at least eight cycles---likely more, as the control logic has to determine which operations to perform in each step.
 There are some easy optimisations like adding a separate connection from `MEM` to `CTRL` and read the instruction address straight from the bus instead, or to add specialised hardware to increment `PC`.
 
-=== Microarchitecture vs. Big A Architecture
+=== Microarchitecture vs. Instruction Set Architecture
 
 The presented computer is an example of how any given ISA can be physically implemented.
 It is not the only possible implementation.

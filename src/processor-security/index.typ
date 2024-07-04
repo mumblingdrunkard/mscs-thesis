@@ -46,7 +46,7 @@ Several side-channel attacks have been discovered and demonstrated.
 
 === Defending Against Attacks on In-Order Processors
 
-There are generally two approaches to preventing attacks on InO processors: preventing leaks entirely, or making leaks independent of secrets.
+There are generally two approaches to preventing attacks on InO processors: preventing leaks, or making leaks independent of secrets.
 The first approach is universal and secures all applications in the system.
 Making leaked information independent of secrets requires programmers to make careful considerations about what instructions are executed, when they are executed, and which data those instructions depend upon.
 
@@ -59,6 +59,10 @@ Stopping leaks can be done
 Accepting side channels as a fact of life.
 
 == Threat Modelling
+
+A _threat model_ is a framework for analysing the security of a processor.
+_Defining such a model is difficult_.
+Determining
 
 == Speculative Execution Vulnerabilities in Out-of-Order Processors
 

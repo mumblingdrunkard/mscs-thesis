@@ -87,7 +87,7 @@ What is most curious about this is that the results seem to be consistent up to 
 We will discuss various hypotheses for why this happens in @ch:discussion.
 
 In any case, the tests self-report passing their own checks, an unlikely event if there was anything wrong with the loaded values in a single-threaded context.
-Because of this, we will operate with the assumption that program behaviour is as normal and that only thing causing problems is the way programs print their results when combined with address prediction.
+Because of this, we operate with the assumption that program behaviour is as normal and that only thing causing problems is the way programs print their results when combined with address prediction.
 
 == Extracting the Results
 
@@ -140,7 +140,7 @@ With these two base systems, and the two on/off variables of speculative load wa
 
 == Results
 
-We list the results for different configurations.
+We list the results for the different configurations.
 
 === Instructions Per Cycle
 
@@ -214,8 +214,82 @@ Similarly, @tab:mediumboom-ipc and @tab:mediumboom-ipc-relative contain the abso
 
 === Accuracy and Coverage
 
-#todo[TODO rerun tests with proper prints]
+We have collected statistics for accuracy and coverage in the *ldpred-no-spec-ld* configurations for both the SmallBoomConfig and MediumBoomConfig.
+@tab:smallboom-prediction-stats and @tab:mediumboom-prediction-stats show the raw data collected.
+The columns are as follows:
+- *N Loads* is the total number of load instructions committed,
+- *Fired* is the number of predictions that were actually used,
+- *Correct Fired* is the number of used predictions that were also correct,
+- *Total Pred.* is the total number of predictions made, and
+- *Total Correct Pred.* is the total number of correct predictions made, used or not.
 
-=== Time Until Needed
+@tab:smallboom-prediction-stats-scaled and @tab:mediumboom-prediction-stats-scaled show the same data with the four last columns scaled to different quantities such that:
+- *Fired/N Loads* gives the coverage (what portion of loads were given doppelgangers?),
+- *Correct Fired/Fired* gives the accuracy of issued doppelgangers,
+- *Total Pred./N Loads* gives the coverage if all predictions were used to generate doppelgangers, and
+- *Total Correct Pred./Total Pred.* gives the accuracy if all predictions were used to generate doppelgangers.
 
-#todo[TODO rerun tests with proper prints]
+Note that the SmallBoomConfig and MediumBoomConfig sometimes differ in the number of committed load instructions.
+We have verified that for the tests themselves, all configurations commit exactly the same number of instructions (`minstret` is equal for each test no matter the configuration).
+The difference likely stems from the setup and teardown that surrounds each test.
+
+All of these statistics are only collected on committed loads.
+Predictions made for uncommitted loads are not counted.
+
+#let smallboom = csv("./data/acc-cov-smallboom.csv")
+
+#figure(
+  caption: "SmallBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, per application",
+  table(
+    columns: (auto, ) * 6,
+    [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
+    ..smallboom.flatten()
+  ),
+) <tab:smallboom-prediction-stats>
+
+#figure(
+  caption: "SmallBoomConfig total loads and number of fired predictions scaled to different quantities",
+  table(
+    columns: (auto, ) * 6,
+    [*Test*], [*N Loads*], [*Fired/N Loads*], [*Correct Fired/Fired*], [*Total Pred./N Loads*], [*Total Correct Pred./Total Pred*],
+    ..smallboom.map(((name, a, b, c, d, e)) => {
+      let a = float(a)
+      let b = float(b)
+      let c = float(c)
+      let d = float(d)
+      let e = float(e)
+      let m = calc.round.with(digits: 4)
+      (name, a, m(b/a), m(c/b), m(d/a), m(e/d)).map((it) => [#it])
+    }).flatten()
+  ),
+) <tab:smallboom-prediction-stats-scaled>
+
+#let mediumboom = csv("./data/acc-cov-mediumboom.csv")
+
+#figure(
+  caption: "MediumBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, per application",
+  table(
+    columns: (auto, ) * 6,
+    [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
+    ..mediumboom.flatten()
+  ),
+) <tab:mediumboom-prediction-stats>
+
+#figure(
+  caption: "MediumBoomConfig total loads and number of fired predictions scaled to different quantities",
+  table(
+    columns: (auto, ) * 6,
+    [*Test*], [*N Loads*], [*Fired/N Loads*], [*Correct Fired/Fired*], [*Total Pred./N Loads*], [*Total Correct Pred./Total Pred*],
+    ..mediumboom.map(((name, a, b, c, d, e)) => {
+      let a = float(a)
+      let b = float(b)
+      let c = float(c)
+      let d = float(d)
+      let e = float(e)
+      let m = calc.round.with(digits: 4)
+      (name, a, m(b/a), m(c/b), m(d/a), m(e/d)).map((it) => [#it])
+    }).flatten()
+  ),
+) <tab:mediumboom-prediction-stats-scaled>
+
+
