@@ -536,3 +536,60 @@ bib:hardcaml:
     value: https://arxiv.org/html/2312.15035v1
     date: 2024-06-27
  
+bib:aes-standard:
+  type: book
+  title: Advanced Encryption Standard (AES)
+  date: 2023-05-09
+  url: 
+    value: https://doi.org/10.6028/NIST.FIPS.197-upd1
+    date: 2024-06-17
+  parent:
+    title: Federal Information Processing Standards Publication
+    publisher: National Institute of Standards and Technology
+
+bib:aes-cache:
+  type: article
+  title: Cache-timing attacks on AES
+  author:
+    - Bernstein, Daniel J.
+  date: 2005-04-14
+  url:
+    value: https://cr.yp.to/antiforgery/cachetiming-20050414.pdf
+    date: 2024-06-17
+
+bib:aes-power:
+  type: article
+  title: Power-Based Side-Channel Attack for AES Key Extraction on the ATMega328 Microcontroller
+  author:
+    - Banerjee, Utsav
+    - Ho, Lisa
+    - Koppula, Skanda
+  date: 2022-03
+  url:
+    value: https://arxiv.org/pdf/2203.08220
+    date: 2024-06-17
+
+bib:aes-em:
+  type: article
+  title: Advanced Far Field EM Side-Channel Attack on AES
+  author:
+    - Wang, Ruize
+    - Wang, Huanyu
+    - Dubrova, Elena
+    - Brisfors, Martin
+  date: 2021-05-25
+  url: 
+    value: https://dl.acm.org/doi/10.1145/3457339.3457982
+    date: 2024-06-17
+  parent:
+    title: "CPSS '21: Proceedings of the 7th ACM on Cyper-Physical System Security Workshop"
+    publisher: Association for Computing Machinery
+ 
+bib:intel-guidelines:
+  type: article
+  title: Guidelines for Mitigating Timing Side Channels Against Cryptographic Implementations
+  publisher: Intel
+  date: 2022-06-29
+  url:
+    value: https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/secure-coding/mitigate-timing-side-channel-crypto-implementation.html
+    date: 2024-06-17

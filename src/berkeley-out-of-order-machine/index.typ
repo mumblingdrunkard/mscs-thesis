@@ -92,6 +92,37 @@ This is called the _instruction fetch unit_ (IFU).
 
 `lsu` contains the files for the _load-store unit_ (LSU) described later.
 
+#figure(
+  ```monosketch
+                      ┌───────────────────────────┐
+                      │            IF             │
+                      └────────────┬──────────────┘
+                      ┌────────────▼──────────────┐
+                 ┌────┤            ID             │
+                 │    └────────────┬──────────────┘
+  ┌──────────────▼─┐  ┌────────────▼──────────────┐
+  │                │  │            RR             │
+  │      ROB       │  └───┬──────────────┬────────┘
+  │                │  ┌───▼───┐ ┌────────▼────────┐
+  │                │  │  mIQ  │ │       iIQ       │
+  └────────┬───────┘  └───┬───┘ └───┬─────────┬───┘
+           ▼          ┌───▼─────────▼─────────▼───┐
+        commit        │            PRF            │
+                      └───┬─────────┬─────────┬───┘
+  ┌────────────────┐      ▼     ┌───▼───┐ ┌───▼───┐
+  │      LSU       ◀───  AGU    │MUL/DIV│ │  ALU  │
+  └───────▲────────┘            ├───────┤ └───┬───┘
+          │                     │MUL/DIV│     ▼    
+  ┌───────▼────────┐            ├───────┤   to PRF 
+  │                │            │MUL/DIV│          
+  │       D$       │            └───┬───┘          
+  │                │                ▼              
+  └────────────────┘              to PRF           
+  ```,
+  kind: image,
+  caption: "High-level overview of BOOM microarchitecture",
+)
+
 === Anatomy of a Micro-operation
 
 The BOOM uses a single class to represent most of the control signals that flow through the processor.
@@ -99,7 +130,7 @@ With few exceptions, the control signals for each stage are either derived from,
 
 This uOP class contains various flags and fields that inform later units of the type of instruction, which architectural registers it reads and writes, which physical registers it depends upon and writes to, which branches the instruction is currently speculated under, and more.
 
-Not all signals are used in all stages, but Chisel optimises out these signals and only keeps those that actually need to be brought along.
+Not all signals are used in all stages, but Chisel optimises out these signals and only keeps those that need to be brought along.
 This is a big advantage for development and debugging because it allows for assigning a signal as early as instruction fetch, and reading it back out at commit.
 It also has the downside of it being very easy to accidentally rely on a signal that is not meant to be available at a certain stage.
 For example, at commit, the information in the uOP comes from the ROB.
@@ -108,7 +139,13 @@ Depending on a signal at commit that was previously optimised away has the often
 === Instruction Fetch
 
 Because the BOOM is a superscalar implementation, the frontend must be able to fetch multiple instructions per cycle.
-From the L1i, the BOOM fetches a number of bytes and performs rudimentary pre-decoding to determine instruction boundaries and to be able to perform branch prediction.
+The BOOM fetches a number of bytes from the L1i and performs rudimentary pre-decoding to determine instruction boundaries and to be able to perform branch prediction.
+
+It places raw instructions in a buffer that is read by the instruction decode stage.
+
+=== Instruction Decode
+
+The ID stage decodes raw instructions from the fetch buffer and allocates various necessary resources.
 
 === Re-Order Buffer
 
@@ -122,7 +159,7 @@ An obvious downside is the requirement that instructions in the same row must be
 Documentation states that the low-order bits of each instruction in the ROB are determined by the index within each row, but this information is likely outdated and from a time when the BOOM did not support compressed instructions.
 Now the uOP class contains an explicit field `pc_lob` which can be concatenated with the high-order bits stored per row.
 
-The high-order bits of the PC in each ROB row is stored in the _fetch target queue_ (FTQ) in the IFU and is used for referencing in other parts of the pipeline; for example when instructions have to be replayed and the frontend has to be redirected to some point in the past.
+The high-order bits of the PC in each ROB row are stored in the _fetch target queue_ (FTQ) in the IFU and is used for referencing in other parts of the pipeline; for example when instructions have to be replayed and the frontend has to be redirected to some point in the past.
 
 === Memory Issue Queue
 
@@ -130,7 +167,7 @@ The BOOM has a dedicated queue for memory operations.
 
 === Address Generation Units
 
-The _address generation units_ (AGUs) are the functional units that 
+The _address generation units_ (AGUs) are the functional units that calculate addresses for instructions that access memory.
 
 === Load-Store Unit
 

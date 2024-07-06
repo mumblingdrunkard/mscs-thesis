@@ -38,6 +38,6 @@ Address storage in the memory access unit does not have to be expanded as the re
 Thus, the real address can simply replace the predicted one for mispredicted load instructions.
 Said in a different way, once the real address is generated, the predicted address is no longer needed, meaning they can share the same storage.
 
-They @bib:doppelganger further propose to merge the predictor with the one found in the L1 data prefetcher to further save on implementation costs.
+They @bib:doppelganger also propose to merge the predictor with the one found in the L1 data prefetcher to save even more on implementation costs.
 This is only mentioned in passing and is not explored deeply in the paper.
-Instead of predicting the next access, the 
+The reasoning is simple: because common L1d prefetchers predict the next address, the only modification that is needed is for the predictor to predict the current address.

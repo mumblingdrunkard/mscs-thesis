@@ -8,7 +8,7 @@ This section provides a short overview of the history of performance improvement
 === The Easy Option: Increasing Frequency
 
 For a while, two key phenomena dominated the improvements in processor performance: Moore's Law, and Dennard Scaling.
-Moore's Law is the observation that the number of transistors that fit within a given area is roughly doubled every eighteen months (later changed to every two years) because of improvements in technology.
+Moore's Law is the observation that the number of transistors in a circuit is roughly doubled every year (later changed to every two years) because of improvements in technology that enable smaller and cheaper transistors.
 As everything shrinks, the physical distances get shorter, and transmitting information between components uses less energy.
 The water analogy holds here.
 If the wires between components in the chip are tubes, and the tubes have to be filled up and drained every time a bit is changed, shorter, narrower tubes require less total volume to flow.
@@ -28,7 +28,7 @@ $
   P = alpha f C V^2 + P_"static"
 $
 Dynamic power consumption (power consumed due to signals turning on and off within the circuit) is equal to the frequency of switching $f$, multiplied by the capacitance $C$ of the circuit, multiplied by the square of the applied voltage $V$.
-This is scaled by some scaling factor $alpha$.
+This is scaled by the activity factor $alpha$.
 There is also some constant $P_"static"$ which was negligible for a while.
 
 Due to physical properties, a reduction in transistor sizes causes an approximately equal reduction in capacitance and voltage.
@@ -39,7 +39,7 @@ That is, each square millimetre of circuit has approximately the same power outp
 Conversely: the same circuit can be implemented in less area, using less power, all while running faster.
 
 This is Dennard Scaling: the observation that power density stays the same across improvements in technology.
-To get a faster and more power-efficient processor: _wait_.
+To get a faster and more power-efficient processor all one had to do was wait.
 
 These two "laws" were responsible for much of the performance improvements until Dennard Scaling started breaking down around two decades ago.
 The number of transistors per area has still been increasing steadily---albeit at a slower pace---but the frequency increases have been much, much smaller.

@@ -7,7 +7,7 @@ We should therefore explain what is meant by _security_ of processors.
 
 During execution of programs, some values are _secrets_.
 Revealing these values to attackers would allow the attackers to affect the normal operation of the program.
-For example, extracting encryption keys from a program would allow an attacker to interfere with the private communications of a program by listening in on private messages or injecting its own messages.
+For example, extracting encryption keys from a program would allow an attacker to interfere with the private communications of a program by listening in on private messages or pretending to be one of the communicating parties.
 The security of a system relies on it protecting secret values---like encryption keys---from attackers.
 
 The framework for analysing security is called a _threat model_.
@@ -29,10 +29,9 @@ Applications are isolated from each other by virtualising their address spaces s
 When swapping applications, only the architectural state needs to be properly replaced to ensure correct operation.
 Microarchitectural structures like branch predictor storage and cache do not need to be cleared and commonly are not because doing so would reduce performance.
 
-Because of this, malicious applications can determine which cache blocks have been accessed by timing accesses and they can interfere with the branch predictor before other applications get to run.
-
 == Attacks on In-Order Processors
 
+Because microarchitectural state is not flushed when switching applications, malicious applications can often observe the effects that other applications have had on the system.
 By timing memory accesses to its own address space, an application can use information about the cache implementation to determine _something_ about the addresses that applications have accessed previously.
 For example, if it can determine that one of its cache blocks was flushed since the last time it ran, it is likely because another application accessed a block with an equal index.
 If this memory access used an address that was calculated using a secret value, the attacker can know part of the secret.
@@ -42,46 +41,137 @@ This is called a _side-channel attack_.
 
 Side-channels reveal information about execution of a program in a way that is not visible in the ISA, but is visible through other observations such as the passing of time, or the consumption of power.
 Searching for side-channel attacks on an algorithm, protocol, or system is a subject of _cryptanalysis_.
-Several side-channel attacks have been discovered and demonstrated.
+
+Side-channels are not exclusive to processors and their microarchitectures, but appear in most any system.
+The _advanced encryption standard_ (AES) @bib:aes-standard ---a symmetric encryption algorithm famous for securing internet communications for more than two decades---has been broken through various side-channels.
+AES has been broken through the cache timing side-channel @bib:aes-cache, analysis of power consumption @bib:aes-power, and even through electromagnetic radiation while being completely detached from the system @bib:aes-em.
+
+None of these attacks directly attack the mathematical properties of the AES algorithm.
+The maths of AES are sound as far as we [researchers] know.
+Side-channel attacks focus on other information that can be gained by observing execution of the specific implementation of the AES algorithm.
+
+=== Anatomy of a Vulnerable Application
+
+@lst:vulnerable shows a C program that is vulnerable to various side-channel attacks.
+The number of iterations executed in the loop is dependent on the secret value.
+A normal timing attack to determine how long the application takes to execute could easily reveal how many iterations were executed, meaning the secret is revealed.
+
+In the next case, the secret value is used to derive an index into an array and a value is loaded from that index.
+This is a common pattern for various cryptographic algorithms that use lookup tables.
+An attacker that can determine which cache block is affected by that access would be able to determine the lower 8 bits of the secret value.
+
+#figure(
+  ```c
+  extern int *p_secret_value;
+  int secret_value = *p_secret_value;
+
+  for (int i = 0; i < secret_value; i++) {
+    // perform some iteration
+  }
+
+  extern int* prng_vals;
+  int prng_val = prng_vals[secret_value % 256];
+  ```,
+  caption: "A possibly vulnerable program"
+) <lst:vulnerable>
 
 === Defending Against Attacks on In-Order Processors
 
-There are generally two approaches to preventing attacks on InO processors: preventing leaks, or making leaks independent of secrets.
+There are generally two approaches to preventing side-channel attacks on InO processors: preventing leaks, or making leaks independent of secrets.
 The first approach is universal and secures all applications in the system.
 Making leaked information independent of secrets requires programmers to make careful considerations about what instructions are executed, when they are executed, and which data those instructions depend upon.
 
 ==== Stopping the Leaks
 
-Stopping leaks can be done 
+The first and most intuitive approach to stopping leaks is to prevent leaky behaviour in the first place, or at least prevent other applications from observing leaks.
 
-==== Secret-Independent Programming
+For example, the OS might ensure the entire microarchitectural state is flushed before switching applications, ensuring malicious applications cannot possibly read any microarchitectural state left behind by a victim application.
 
-Accepting side channels as a fact of life.
+This obviously has a potentially big impact on application performance as each application has to rebuild its microarchitectural state every time it is given time on the processor.
+Even with such a mitigation, applications may be vulnerable through other side-channels such as timing or power analysis.
+Making all execution spend the same amount of time, independent of secrets is not an easy feat.
 
-== Threat Modelling
+Because of such downsides, this approach is rarely taken as it slows down applications that have no need for such security measures.
 
-A _threat model_ is a framework for analysing the security of a processor.
-_Defining such a model is difficult_.
-Determining
+==== Secret-Independent and Constant Time Programming
+
+The other approach is to make execution independent of secrets such that a secret leaked through a side-channel cannot effectively be distinguished from other data or noise.
+For example, the loop might be reprogrammed to iterate to an upper bound of the secret value every time, and the results of unused iterations can be discarded.
+The array access can be reprogrammed to access all values in order and using a conditional move, an instruction that only puts a given value in a register if another value fulfills some condition as shown in @lst:secret-independent-load.
+
+#figure(
+  ```c
+  for (int i = 0; i < 256; i++) {
+
+        // cond_mov(int *p_dst, int src, int condition);
+    // only copies src into *dst if the condition is fulfilled
+    cond_mov(&val, prng_vals[i], i == secret_val % 256);
+  }
+  ```,
+  caption: "Pseudocode for accessing the array values in a safe manner",
+) <lst:secret-independent-load>
+
+There are many guidelines for writing such code @bib:intel-guidelines.
+
 
 == Speculative Execution Vulnerabilities in Out-of-Order Processors
 
-While InO processors may be vulnerable to some attacks, the applications are in control of what they leak through the cache side-channel.
+While InO processors may be vulnerable to some attacks, the applications are mostly in control of what they leak through various side-channels.
 This is not the case in OoO processors, as has been demonstrated by the _speculative execution vulnerabilities_: _Spectre_ @bib:spectre and _Meltdown_ @bib:meltdown.
 
 The nature of OoO processors means an application may leak values through various side-channels during transient execution---execution that is not even supposed to take place.
-Speculative execution attacks use features of the microarchitecture to reliably force the processor to mis-speculate in a victim application and enter an unintended path of execution that leaks secret values into side-channels.
-They then use the same, or other features to reliably extract information from those side-channels to obtain the secret values.
-
 OoO processors are uniquely vulnerable to a class of attacks that are not possible on InO processors.
 
-=== Spectre and Meltdown as a Class of Vulnerabilities
+=== Anatomy of a Speculative Execution Attack
 
-==== Meltdown is a Dumb Bug
+A speculative execution attack is performed:
++ When the malicious application runs, it intentionally mis-train the branch predictor (or some other predicting structure) such that
++ when the victim application is run, it enters an incorrect path of execution that depends on secret values and leaks this secret value through a side-channel before
++ the malicious application is again given time on the processor and determines the secret by observing the side-channel.
 
-Meltdown is a race condition 
+This general approach to speculative execution attacks relies on a victim application containing exploitable code.
 
-=== Defending Against Attacks on Out-of-Order Processors
+=== Covert Channels and Meltdown
+
+Modern operating systems will commonly map unrelated, privileged memory into the virtual address space of all processes and only mark those privileged regions as such---relying on permission checking for security.
+
+There is a "bug" in some implementations of processors where the permission to perform a load instruction is unchecked until long after the load in question was performed.
+
+Under mis-speculated transient execution, the rules can be broken because the work is bound to be squashed.
+
+The above three facts combine to create Meltdown.
++ Mis-train the branch predictor.
++ Under mis-speculated transient execution, access memory that the process does not have permission for and read a secret value.
++ During the same transient execution, leak the secret value through a side-channel.
++ During normal execution, determine the leaked secret value through a cache-timing attack.
+
+Here, there is no need for the victim application to even execute or perform any action than to be mapped into virtual memory.
+The process cannot directly use the secret value or store it somewhere that it has access to, but it can leak it through the cache side-channel by performing a load based on the secret value such as the array access example earlier.
+
+The cache side-channel forms a _covert channel_ for the malicious application to communicate with itself during transient execution.
+In general, a covert channel allows information to be transferred between processes that are not allowed to communicate.
+
+=== Spectre as a Class of Vulnerabilities
+
+Spectre is a difficult problem to solve.
+Spectre is not tied to any specific side-channel, but is instead described as a class of vulnerabilities that are based on exploiting information leakage that happens during transient execution.
+Many variants of Spectre have been demonstrated and documented.
+
+== Threat Modelling
+
+As mentioned, a threat model is a framework for analysing the security of a processor.
+_Defining such a model is difficult_.
+A threat model contains a few different assumptions about the attacker, the system under attack, and the applications under attack.
+
+Threat modelling does not only apply to processor design and a system may still be vulnerable despite a secure processor.
+On the flipside, a system may be secure in spite of an "insecure" processor because the system restricts the access an attacker has to the processor.
+
+When building threat models for any system, the first question is "what is being protected?", then "how can it be attacked?", and finally "how to mitigate those attacks?".
+
+In terms of speculative execution vulnerabilities, threat modelling mainly focus on how a speculating OoO processor is vulnerable in ways that InO processors are not.
+Such a model may be 
+
+== Defending Against Attacks on Out-of-Order Processors
 
 Not that simple.
 Constant time programming does not work.

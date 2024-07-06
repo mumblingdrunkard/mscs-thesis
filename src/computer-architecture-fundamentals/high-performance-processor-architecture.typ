@@ -80,7 +80,7 @@ Later instructions that read from that same architectural register will similarl
 The status of registers in the PRF can be used or unused, and the value within the register can be ready or not ready.
 If two instructions $a$ and $b$ write to the same architectural register, they each receive a physical register to write to instead.
 The physical register destination of $a$ can be _released_ (set to unused) when no more instructions between $a$ and $b$ depend on the result from $a$.
-Obviously, no instructions after $b$ can depend on the result of $a$ as $b$ overwrites the value in the architectural register.
+Intuitively, no instructions after $b$ can depend on the result of $a$ as $b$ overwrites the value in the architectural register.
 
 The PRF must be at least as large as the ARF plus one to ensure the entire architectural state can be tracked at any time and that there is at least one unused physical register to map an incoming architectural register to.
 Often, the PRF is several times larger than the ARF, depending on how many instructions can be tracked at once.
@@ -148,7 +148,8 @@ If the prediction turns out to be wrong, the processor state will be rolled back
 
 All the work between a branch prediction being made and a branch resolving is _speculative_.
 When the prediction is incorrect, the speculative work is squashed and is called _transient execution_.
-Transient, meaning it exists only for a short span of time.
+The Merriam-Webster dictionary defines "transient" as "passing especially quickly into and out of existence", which is a fitting description of work that has been performed only to be squashed.
+
 Speculation happens in InO processors too, but as branches are resolved in order, incorrectly fetched instructions do not get to affcet microarchitectural state such as caches.
 This is not the case in OoO processors where a load instruction fetched after a speculated branch is allowed to access memory before it is known whether it really is part of proper execution.
 

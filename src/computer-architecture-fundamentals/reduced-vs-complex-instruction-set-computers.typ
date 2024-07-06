@@ -23,7 +23,8 @@ Compilers were choosing to emit only those instructions that did not require thi
 Lots of development has happened since then, and CISC architectures still have a strong presence in the market of high-end computing, mostly for historical reasons.
 A symbiotic relationship between compiler developers and hardware engineers has caused a subset of the CISC ISAs to become reliably fast, while more obscure instructions can be much slower.
 The fast subset almost resembles a RISC in how it is used.
-Maybe the real RISC is the CISC we made along the way.
+
+Additionally, CISC processor design has started to resemble RISC processors internally and the fetch/decode stages break large CISC instructions into multiple RISC-like operations before they are passed to the backend.
 
 Our own interpretation of the subject is that anything that has an obvious path to implementation in a typical state of the art OoO processor can be considered RISC.
 RISC-V extensions add hundreds of instructions for things like vector processing, bit-manipulation, hardware-accelerated cryptography, and more, but implementation is relatively clear and straightforward.

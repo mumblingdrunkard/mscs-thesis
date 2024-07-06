@@ -46,7 +46,7 @@ Thus, the critical path is likely unchanged.
 
 As for how much hardware is needed to implement the entire scheme, the added bits to track doppelgangers in the LSU are largely irrelevant, requiring only one bit per LDQ entry, and the major cost is likely to be the predictor storage itself which requires storing the tag, the previous accessed address, the stride, and the confidence for each entry.
 
-Obviously, with the current implementation, there is a lot of waste, but for the planned architecture this should not be a problem.
+With the current implementation, there is a lot of waste, but for the planned architecture this should not be a problem.
 The planned architecture does seem feasible to implement with additional time and better knowledge of the working components of the BOOM.
 
 Without any obvious indication of anything to the contrary, we claim similar hardware cost as @bib:doppelganger:
@@ -174,7 +174,7 @@ One such predictor might be using _delta-correlating prediction tables_ (DCPT) i
 === Test Predictor with Proper Benchmarking Suites and on Shared Systems
 
 A glaring weakness of the tests we have run is that they are all very small programs that likely fit fully within the instruction cache and only run one at a time.
-A useful predictor should be resilient to an OS switching tasks and should accomodate many tasks running within the same space of time.
+A useful predictor should be resilient to an OS switching tasks and should accomodate many tasks running within the same space of time and possibly with similar virtual address spaces.
 
 With this, it should be considered whether sharing the predictor between many applications poses a security risk.
 Intuitively, information in the predictor is only based on commited information and it should not be possible to extract information that is not already possible to extract through the cache side-channel.
@@ -185,7 +185,7 @@ Entries should likely still be tagged with information specifying which applicat
 
 RISC-V has the instruction `SFENCE.VME` to signal that a change has occured to the virtual memory mapping and that the processor should invalidate some entries in structures like the TLB.
 This is common when unmapping pages in virtual memory.
-Similarly, corresponding entries in the predictor may need flushing as normal predictions bypass the TLB entirely and thus bypass permission checks on the assumption that an access to the same page of memory has been made previously and is therefore OK.
+Similarly, corresponding entries in the predictor may need flushing as normal predictions bypass the TLB entirely and thus bypass permission checks on the assumption that subsequent accesses to a page are OK without permission checks.
 
 This may also be entirely fine as the permission check is still be performed when the real address arrives, causing the processor to raise an exception if the prediction is correct and the address falls outside of mapped memory.
 
@@ -211,7 +211,7 @@ Adding ports to the L1d prefetcher could be costly.
 
 If the two structures are physically far apart on the chip, that introduces additional issues, but can potentially be compensated for by allowing more latency for predictions.
 
-=== Following Through on Data Cache Misses for High-Confidence Doppelganggers
+=== Following Through on L1d Misses for High-Confidence Doppelganggers
 
 We have decided to drop doppelgangers that miss in the L1d.
 Our reasoning here is that in a system with an L1d prefetcher, predictable addresses will practically always hit.
@@ -219,6 +219,8 @@ Because our predictor uses a simple strided scheme, it is fair to say the addres
 Thus, by allowing misses to start fetching from deeper cache levels, there is a very low likelihood of those data being useful.
 
 However, there is an interesting opportunity of a symbiotic relationship between the L1d prefetch predictor and the load address predcitor where they both detect different patterns and doppelganger loads appear almost like software prefetches to the L1d.
+
+Additionally, it is obvious to us that L1d misses must be serviced for any MLP to be regained under certain secure speculation schemes such as DoM.
 
 === United Nations Sustainability Goals
 

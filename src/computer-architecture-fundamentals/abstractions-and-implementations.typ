@@ -6,7 +6,9 @@
   attribution: "Carl Sagan",
 )
 
-We take the above quote as a reflection on how easy it often is to forget the complexities we deal with when developing hardware.
+We take the above quote as a reflection on how easy it often is to forget the complexities we deal with.
+This is true for hardware development too.
+
 Most everything in the field of computing is an _abstraction_.
 There are multiple _layers_ of abstraction.
 There are _contracts/interfaces_ between those layers, specifying a common _language_ that the layer above speaks, and that the layer below understands.
@@ -33,7 +35,8 @@ It is a switch that can be turned on or off using electricity.
 By using clever organisations of transistors, it is possible to express boolean logic.
 
 Boolean logic concerns itself with two values: true and false, 1 and 0, yes and no, on and off, high and low.
-Because individual transistors are hard to work with and do not look pretty in diagrams, they are grouped together to form basic _logic gates_ and the group is replaced by an appropriate symbol.
+Transistors are grouped together to form basic _logic gates_ that perform fundamental boolean operations such as $"AND"$, $"OR"$, and $"XOR"$.
+When working with digital circuits, it is common to describe them in terms of logic gates.
 This is an abstraction to more easily focus on the logic and not the physical implementation, though it is a trivial mapping, like assembly to machine code.
 
 A logic gate has one or more inputs and outputs.
@@ -97,7 +100,7 @@ An adder is constructed by chaining full-adders, connecting the carry output of 
 Logic is useful, but computers require _state_---as in "state of being".
 When building circuits, it is a good idea to ensure logic does not directly depend on its own result.
 That is to say: the input of any one gate cannot depend on its own output, directly or transitively; there is no path from the output of the gate back to the input.
-Such a path is called a _combinational loop_ and most tools prevent making them.
+Such a path is called a _combinational loop_ and tools generally do not accept them in a design.
 
 An exception is made for the _register_ cell which is constructed by using logic gates that connect back to themselves with positive feedback.
 A register cell _stores_ data that can be read back out at a later time.
@@ -157,7 +160,7 @@ Because of this, registers are usually implemented using flip-flops to give more
 Registers and combinational logic are the basic building blocks of the _register-transfer level_ (RTL).
 This is an abstraction level where circuits are modelled as flows of data between registers.
 
-A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all flip-flaps in the circuit to ensure a common time for when values change.
+A _clock_ signal that toggles between on and off can be attached to the enable input $e$ of all flip-flops in the circuit to ensure a common time for when values change.
 The space between two _rising edges_ (where the signal goes from low to high), is called a _clock cycle_.
 When drawing diagrams, the clock signal is often left out for brevity.
 
@@ -175,7 +178,7 @@ Different ranges of addresses may be mapped to different types of memory.
 The main memory stores program data and instructions and has no side-effects---i.e. using load and store instructions on the main memory has no other observable effect than to read or write those values.
 Other address ranges may be mapped to various devices and can have side-effects.
 
-ISAs designed for running operating systems usually contain specifications for _memory virtualisation_.
+ISAs designed for running operating systems (OSs) usually contain specifications for _memory virtualisation_.
 Virtualised memory uses _virtual addresses_ and a _translation_ scheme to translate from these virtual addresses to the "real" physical addresses.
 This way, individual applications can access the same virtual address, but refer to different values.
 Thus, an operating system can, for example, start two instances of the same program without them interferring with each other's values.
