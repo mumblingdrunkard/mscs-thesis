@@ -113,7 +113,6 @@ The array access can be reprogrammed to access all values in order and using a c
 
 There are many guidelines for writing such code @bib:intel-guidelines.
 
-
 == Speculative Execution Vulnerabilities in Out-of-Order Processors
 
 While InO processors may be vulnerable to some attacks, the applications are mostly in control of what they leak through various side-channels.
@@ -129,33 +128,36 @@ A speculative execution attack is performed:
 + when the victim application is run, it enters an incorrect path of execution that depends on secret values and leaks this secret value through a side-channel before
 + the malicious application is again given time on the processor and determines the secret by observing the side-channel.
 
-This general approach to speculative execution attacks relies on a victim application containing exploitable code.
+This attack relies on locating or injecting vulnerable code  (called a _gadget_)that the processor can execute while executing the victim application.
+The attacking application then "tricks" the processor into mispredicting in a way that leaks the secret through a _covert channel_.
+
+A side-channel forms a covert channel for applications to communicate.
+In general, anything not intended for communication being used for communication is called a covert channel.
+Processes may not be allowed to communicate directly, but if both processes can access some shared structure and leave traces, they can effectively communicate anyway.
+
+This is the Spectre attack at a high level:
+locating or injecting a vulnerable sequence of instructions, and then forcing the processor to execute that sequence of instructions while running the victim process because of misprediction, causing the processor to spill the secrets of a victim application through a covert channel.
+
+While the most popular example of Spectre uses the cache side-channel to communicate secrets, it is not the only variant of the attack.
+Far from it, in fact.
+Instead of being one vulnerability with a simple fix, Spectre is presented as a whole class of vulnerabilities that have a common general approach as outlined above.
 
 === Covert Channels and Meltdown
 
 Modern operating systems will commonly map unrelated, privileged memory into the virtual address space of all processes and only mark those privileged regions as such---relying on permission checking for security.
 
-There is a "bug" in some implementations of processors where the permission to perform a load instruction is unchecked until long after the load in question was performed.
+There is a "bug" in some implementations of processors where the permission to perform a load instruction is not checked or handled until long after the load in question was performed and the value is allowed to propagate to dependent instructions.
 
-Under mis-speculated transient execution, the rules can be broken because the work is bound to be squashed.
+Under mis-speculated transient execution, rules be broken without a program crashing because the work is bound to be squashed.
 
 The above three facts combine to create Meltdown.
 + Mis-train the branch predictor.
 + Under mis-speculated transient execution, access memory that the process does not have permission for and read a secret value.
-+ During the same transient execution, leak the secret value through a side-channel.
-+ During normal execution, determine the leaked secret value through a cache-timing attack.
++ During the same transient execution, leak the secret value through a side-channel such as the cache.
++ During normal execution, determine the leaked secret value through the side-channel, for example by timing cache accesses.
 
 Here, there is no need for the victim application to even execute or perform any action than to be mapped into virtual memory.
 The process cannot directly use the secret value or store it somewhere that it has access to, but it can leak it through the cache side-channel by performing a load based on the secret value such as the array access example earlier.
-
-The cache side-channel forms a _covert channel_ for the malicious application to communicate with itself during transient execution.
-In general, a covert channel allows information to be transferred between processes that are not allowed to communicate.
-
-=== Spectre as a Class of Vulnerabilities
-
-Spectre is a difficult problem to solve.
-Spectre is not tied to any specific side-channel, but is instead described as a class of vulnerabilities that are based on exploiting information leakage that happens during transient execution.
-Many variants of Spectre have been demonstrated and documented.
 
 == Threat Modelling
 
@@ -168,15 +170,51 @@ On the flipside, a system may be secure in spite of an "insecure" processor beca
 
 When building threat models for any system, the first question is "what is being protected?", then "how can it be attacked?", and finally "how to mitigate those attacks?".
 
-In terms of speculative execution vulnerabilities, threat modelling mainly focus on how a speculating OoO processor is vulnerable in ways that InO processors are not.
-Such a model may be 
+In terms of speculative execution vulnerabilities, the main focus of threat modelling is on how a speculating OoO processor is vulnerable in ways that InO processors are not.
+For this case, practically any structure that can be speculatively modified that is not reverted on mis-speculation poses the risk of a speculative execution vulnerability.
+
+=== Analysis
+
+
+
+=== Implicit and Explicit Channels
+
+#figure(
+  ```c
+  extern int** pp_other_secret;
+  extern int* p_secret;
+  extern int* p_a;
+  extern int* p_b;
+
+  if (/* Misprediction */) {
+    // implicit channel
+    int tmp = *p_secret;
+    int val;
+    if (tmp) {
+      val = *p_a;
+    } else {
+      val = *p_b;
+    }
+
+    // explicit channel
+    int* p_other_secret = *pp_other_secret;
+    int other_val = *p_other_secret;
+  }
+  ```,
+  caption: "An possible implicit channel",
+)
+
+=== Secrets
 
 == Defending Against Attacks on Out-of-Order Processors
 
-Not that simple.
-Constant time programming does not work.
+Defending against speculative execution attacks is not so simple.
+The obvious solution is to disable speculation, but this has such a large performance impact that it is not a practical solution.
 
 === Secure Speculation Schemes
+
+Several schemes have been proposed to close Spectre attacks on certain structures within the processor.
+These different schemes use different threat models and protect different things.
 
 ==== Delay-on-Miss
 

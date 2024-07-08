@@ -29,7 +29,7 @@ bib:kvalsvik-thesis:
 bib:vhdl-standard:
   type: book
   title: "1076-2019 - IEEE Standard for VHDL Language Reference Manual"
-  publisher: "IEEE"
+  publisher: "Institute of Electrical and Electronics Engineers"
   date: 2019-12-23
   serial-number:
     isbn: 978-1-5044-6135-1
@@ -50,7 +50,7 @@ bib:spec-cpu:
 bib:systemverilog-standard:
   type: book
   title: "1800-2023 - IEEE Standard for SystemVerilog--Unified Hardware Design, Specification, and Verification Language"
-  publisher: "IEEE"
+  publisher: "Institute of Electrical and Electronics Engineers"
   date: 2024-02-28
   serial-number:
     isbn: 979-8-8557-0500-3
@@ -196,7 +196,7 @@ bib:spectre:
   parent:
     type: proceedings
     title: "40th IEEE Symposium on Security and Privacy (S&P'19)"
-    publisher: "IEEE"
+    publisher: "Institute of Electrical and Electronics Engineers"
 
 bib:meltdown:
   type: article
@@ -496,7 +496,7 @@ bib:best-offset:
     issn: 2378-203X 
   parent:
     title: 2016 IEEE International Symposium on High Performance Computer Architecture
-    publisher: IEEE
+    publisher: Institute of Electrical and Electronics Engineers
     
 bib:dcpt:
   type: article
@@ -593,3 +593,28 @@ bib:intel-guidelines:
   url:
     value: https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/secure-coding/mitigate-timing-side-channel-crypto-implementation.html
     date: 2024-06-17
+
+bib:firesim:
+  type: article
+  title: "FireSim: FPGA-Accelerated Cycle-Exact Scale-Out System Simulation in the Public Cloud"
+  author:
+    - Karandikar, Sagar
+    - Mao, Howard
+    - Kim, Donggyu
+    - Biancolin, David
+    - Amid, Alon
+    - Lee, Daeyol
+    - Pemberton, Nathan
+    - Amaro, Emmanuel
+    - Schmidt, Colin
+    - Chopra, Aditya
+    - Huang, Qijing
+    - Kovacs, Kyle
+    - Nikolic, Borivoje
+    - Katz, Randy
+    - Bacharach, Jonathan
+    - Asanović, Krste
+  parent:
+    title: "2018 ACM/IEEE 45th Annual International Symposium on Computer Architecture"
+    date: 2018
+    publisher: Institute of Electrical and Electronics Engineers

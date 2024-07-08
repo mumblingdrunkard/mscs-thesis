@@ -164,9 +164,18 @@
     )
   ]
   
-  outline(target: figure.where(kind: image), title: "List of Figures")
-  outline(target: figure.where(kind: raw), title: "List of Listings")
-  outline(target: figure.where(kind: table), title: "List of Tables")
+  {
+    show heading.where(level: 1): it => {
+      linebreak()
+      // v(2.7em, weak: true)
+      (latex.size.Huge)(it.body)
+      v(1em)
+    }
+    outline(target: figure.where(kind: image), title: "List of Figures")
+    outline(target: figure.where(kind: raw), title: "List of Listings")
+    pagebreak()
+    outline(target: figure.where(kind: table), title: "List of Tables")
+  }
 
   set page(numbering: none)
   pagebreak(to: "odd")

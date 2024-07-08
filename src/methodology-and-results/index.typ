@@ -9,7 +9,7 @@ The results are interpreted and discussed in the next chapter.
 
 The best approach would be to run hardware accelerated simulation using FireSim, loading in representative programs like the SPEC CPU @bib:spec-cpu suite and evaluating performance after a warm-up period per program.
 
-However, our process of synthesis fails on a cryptic error from Vivado.
+However, our process of synthesis fails on a cryptic error from Vivado when trying to run the flow for FireSim.
 Because of time-constraints, we have decided to use the software simulator to evaluate performance.
 We also do not have straightforward access to a RISC-V version of the SPEC CPU suite.
 
@@ -239,7 +239,7 @@ Predictions made for uncommitted loads are not counted.
 #let smallboom = csv("./data/acc-cov-smallboom.csv")
 
 #figure(
-  caption: "SmallBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, per application",
+  caption: "SmallBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, calculated per application",
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
@@ -267,7 +267,7 @@ Predictions made for uncommitted loads are not counted.
 #let mediumboom = csv("./data/acc-cov-mediumboom.csv")
 
 #figure(
-  caption: "MediumBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, per application",
+  caption: "MediumBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, calculated per application",
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
@@ -292,4 +292,10 @@ Predictions made for uncommitted loads are not counted.
   ),
 ) <tab:mediumboom-prediction-stats-scaled>
 
+=== Prediction Timeliness
 
+We observed that of correct predictions, the real address arrived after 3 cycles in 11.1% of the cases.
+Another 5.4% of addresses arrived 4 cycles after the prediction.
+In total, only around 22% of correct predictions are compared to the real address within 10 cycles of the prediction being made.
+
+The statistics are similar for incorrect predictions, with the real address arriving 3 cycles after the prediction in 13.4% of the cases and 19.3% arriving within 10 cycles of the prediction being made.

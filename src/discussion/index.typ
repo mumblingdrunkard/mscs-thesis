@@ -33,6 +33,7 @@ The fact that *median* gets a much better coverage and accuracy supports the hyp
 As for coverage in general, we observe that the total coverage (predictions made/total number of loads committed) varies only slightly between the SmallBoom and MediumBoom configurations, with the latter having a slightly lower coverage overall.
 For the effective coverage (predictions used/total number of loads committed), there is a more severe reduction.
 Most likely, this is due to there simply being more conflicts where a prediction is made, but cannot be issued because some other operation is given priority.
+The same number of actions must be performed by the LSU in around half the time, leading to a higher utilisation factor with fewer opportunities to insert predictions.
 Both the SmallBoom and MediumBoom configurations have only a single port to the L1d, which supports the hypothesis of contention.
 
 == Evaluating Hardware Cost
@@ -97,6 +98,15 @@ Attempts at debugging this issue yielded little and the effects of the TVM appea
 
 We outline the future work that should be done for a proper implementation of doppelganger loads in the BOOM core.
 The ordering here is thought to be a reasonable order of steps for actual implementation.
+
+=== Implement Doppelganger Loads Alongside Secure Speculation Schemes
+
+Ultimately, the performance improvements are meagre when compared to speculative load wakeups.
+This is not a surprising result and seems mostly in line with the results from the original paper on doppelganger loads @bib:doppelganger.
+
+Instead, doppelganger loads should be seen in relation to secure speculation schemes such as NDA, STT, and DoM.
+This requires some modifications to how doppelganger loads are performed such as allowing doppelgangers to execute despite ordering violations and store-forwarding as these mechanisms can reveal information about other load and store instructions in flight.
+It may also require delaying changes to the cache replacement policy.
 
 === Detecting and Compensating for Tight Loops
 
@@ -170,6 +180,15 @@ When the delay from prediction to receiving the real address is greater than the
 It may also justify deeper pipelines to access predictor storage, which may in turn allow for storing more predictions overall.
 
 One such predictor might be using _delta-correlating prediction tables_ (DCPT) in which individual load instructions do not exhibit purely strided patterns, but still have patterns of offsets @bib:dcpt.
+
+==== Hybrid Predictor
+
+As only ~20% of predictions are compared to the real address within 10 cycles, there is a good possibility of using additional slower predictors to get more accuracy for longer loads.
+
+One intriguing option is the possibility of issuing multiple doppelgangers per load using fast and slow predictors.
+Similar to how some branch prediction structures work where IF is redirected with a fast, low-accuracy prediction first, and only later redirected if the high-accuracy predictor disagrees, this could work to increase accuracy at the cost of some latency.
+
+We only collected statistics for load instructions that are already covered, but there is also a great possibility of increasing coverage with these predictor structures.
 
 === Test Predictor with Proper Benchmarking Suites and on Shared Systems
 

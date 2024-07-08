@@ -29,6 +29,66 @@ Accesses based on these predictions are dubbed _doppelgangers_ or _doppelganger 
 
 == Doppelganger Loads Architecture
 
+Doppelganger loads are proposed to be implemented with an architecture that resembles the one in @fig:doppelganger-load-architecture.
+
+#figure(
+  ```
+    ┌────────────────┐  ┌───────────────────────────┐
+  ┌─▶     LDPRED     ◀──┤            IF             │
+  │ └────────▲───────┘  └────────────┬──────────────┘
+  │          │          ┌────────────▼──────────────┐
+  │       commit   ┌────┤            ID             │
+  │          │     │    └────────────┬──────────────┘
+  │ ┌────────┴─────▼─┐  ┌────────────▼──────────────┐
+  │ │                │  │            RR             │
+  │ │      ROB       │  └───┬──────────────┬────────┘
+  │ │                │  ┌───▼───┐ ┌────────▼────────┐
+  │ │                │  │  mIQ  │ │       iIQ       │
+  │ └────────┬───────┘  └───┬───┘ └───┬─────────┬───┘
+  │          ▼          ┌───▼─────────▼─────────▼───┐
+  │       commit  ┌─────▶            PRF            │
+  │               │     └───┬─────────┬─────────┬───┘
+  │ ┌─────────────┴──┐      ▼     ┌───▼───┐ ┌───▼───┐
+  │ │      LSU    ▲  │┌──  AGU    │MUL/DIV│ │  ALU  │
+  │ │             │  ││           ├───────┤ └───┬───┘
+  │ │ LDQ ┌──────▶┴┐ ││           │MUL/DIV│     ▼    
+  └─▶ ADDR│DG?┐  │=│ ◀┘           ├───────┤   to PRF 
+    │ ├───┼───┤  └─┘ │            │MUL/DIV│          
+    │ ├───┼───┤      │            └───┬───┘          
+    │ ├───┼───┤      │                ▼              
+    │ └───┴───┘      │              to PRF           
+    └───────▲────────┘                               
+            │                                        
+    ┌───────▼────────┐                               
+    │                │                               
+    │       D$       │                               
+    │                │                               
+    └────────────────┘                               
+  ```,
+  kind: image,
+  caption: "Doppelganger load architecture",
+) <fig:doppelganger-load-architecture>
+
+An address predictor `LDPRED` makes predictions for incoming instructions and sends those predictions to the LSU.
+The LSU sends those predictions to the L1d `D$`.
+Entries in the LDQ for doppelganger loads are shared with the loads they stand in for and are tracked with a flag marking them as doppelgangers `DG?`.
+
+As doppelganger loads complete, the results are written back to the PRF, but dependent instructions are not woken up.
+
+When the real address arrives from an AGU, it is compared to the predicted address already stored in the LSU and, if they are equal, a signal is sent to the PRF/IQs that the result is ready and dependents are woken up to be issued.
+
+The real address replaces the predicted address in the LDQ so that on commit, the address can be sent to the predictor for training.
+
+== Special Considerations for Doppelganger Loads
+
+There are some special cases to take into account when implementing doppelganger loads that are outlined in the paper @bib:doppelganger.
+
+=== Ordering
+
+=== Store-to-Load Forwarding
+
+=== Special Considerations for Delay-on-Miss
+
 == Doppelganger Loads Performance
 
 == The Cost of Doppelganger Loads
