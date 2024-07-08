@@ -1,4 +1,4 @@
-= Doppelganger Loads
+= Doppelganger Loads <ch:doppelganger>
 
 We are implementing doppelganger loads in hardware @bib:doppelganger.
 This chapter presents the concept of Doppelganger Loads, how they do not change the safety guarantees of secure speculation, and how they improve performance.

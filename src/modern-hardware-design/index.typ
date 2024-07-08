@@ -1,4 +1,4 @@
-= Modern Hardware Design
+= Modern Hardware Design <ch:modern-hardware-design>
 
 Throughout this thesis, we discuss the relationships between abstract representations of circuits and their implementation as transistors and wires.
 This chapter briefly describes a standard flow of modern hardware development.

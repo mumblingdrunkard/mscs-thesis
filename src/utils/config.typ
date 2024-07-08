@@ -12,7 +12,7 @@
 #let department = "Computer Science"
 
 #let project = (
-  name: "Doppelganger Loads in Hardware"
+  name: "Doppelganger Loads in the \n Berkeley Out-of-Order Machine"
 )
 
 #let font = "New Computer Modern"

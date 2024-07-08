@@ -1,4 +1,4 @@
-= Architecture and Implementation
+= Architecture and Implementation <ch:architecture-and-implementation>
 
 In this chapter, we cover the architecture and implementation of the predictor and how it connects to other components in the BOOM core.
 We start by summarising the work done previously.
@@ -43,15 +43,16 @@ In @bib:nodland-paper we showed a simple scheme that provides fairness---similar
 
 Due to time constraints and the fact that we only ran simulations, the actual implementation uses a single bank with many ports but still uses the algorithm to select the appropriate port.
 Synthesis tools are unlikely to detect that the port numbers are guaranteed to be different and is thus unlikely to generate the optimal implementation.
-Instead, a proper implementation that exploits this property would need to use something similar to a crossbar swi tch.
-Our original thinking was that this crossbar switch could be implemented physically with 
+Instead, a proper implementation that exploits this property would need to use something similar to a crossbar switch.
+Our original thinking was that this crossbar switch could be implemented physically with tri-state buffers in an integrated circuit.
+This supposedly poses some challenges with capacitances in shared wires and such, but the reduced port count should still be advantageous.
 
 RISC-V technically supports more instruction sizes in increments of 16 bits, but none of the ratified extensions thus far use instructions larger than 32 bits.
 Adding more instruction sizes while keeping the alignment requirements of 16 bits adds more complexity in bank selection logic.
 
 === Training the Predictor
 
-Along with the scheme for efficient predictor storage we displayed the predictor's ability to detect strides in the address of committed load instructions by showing an increasing confidence value in an entry of the predictor.
+Along with the scheme for efficient predictor storage we displayed the predictor's ability to detect strides in the addresses accessed by committed load instructions by showing an increasing confidence value in an entry of the predictor.
 The predictor is only trained on cacheable addresses to prevent sending spurious load instructions to locations that may have side-effects.
 
 == Integrating the Predictor

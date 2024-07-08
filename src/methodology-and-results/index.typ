@@ -1,6 +1,6 @@
 #import "../utils/utils.typ": *
 
-= Methodology and Results
+= Methodology and Results <ch:methodology-and-results>
 
 Here, we describe our approach to gathering the results for the implementation and list these results.
 The results are interpreted and discussed in the next chapter.

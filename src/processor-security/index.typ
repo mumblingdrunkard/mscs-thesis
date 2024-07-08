@@ -1,4 +1,4 @@
-= Processor Security
+= Processor Security <ch:processor-security>
 
 This thesis revolves around microarchitectural optimisations in the context of secure speculation.
 We should therefore explain what is meant by _security_ of processors.
@@ -97,21 +97,21 @@ Because of such downsides, this approach is rarely taken as it slows down applic
 
 The other approach is to make execution independent of secrets such that a secret leaked through a side-channel cannot effectively be distinguished from other data or noise.
 For example, the loop might be reprogrammed to iterate to an upper bound of the secret value every time, and the results of unused iterations can be discarded.
-The array access can be reprogrammed to access all values in order and using a conditional move, an instruction that only puts a given value in a register if another value fulfills some condition as shown in @lst:secret-independent-load.
+The array access can be reprogrammed to access all values in order and using a copy with a mask generated from a comparison as shown in @lst:secret-independent-load.
+There are many guidelines for writing such code @bib:intel-guidelines.
 
 #figure(
   ```c
+  int val = 0;
   for (int i = 0; i < 256; i++) {
-
-        // cond_mov(int *p_dst, int src, int condition);
-    // only copies src into *dst if the condition is fulfilled
-    cond_mov(&val, prng_vals[i], i == secret_val % 256);
+    // == evaluates to 1 if the condition is true, and 0 otherwise
+    // -1 is a number with all bits set---an appropriate mask value
+    int mask = -(i == (secret_val % 256));
+    val |= mask & prng_vals[i];
   }
   ```,
   caption: "Pseudocode for accessing the array values in a safe manner",
 ) <lst:secret-independent-load>
-
-There are many guidelines for writing such code @bib:intel-guidelines.
 
 == Speculative Execution Vulnerabilities in Out-of-Order Processors
 
@@ -175,7 +175,7 @@ For this case, practically any structure that can be speculatively modified that
 
 === Analysis
 
-
+=== Secrets
 
 === Implicit and Explicit Channels
 
@@ -204,8 +204,6 @@ For this case, practically any structure that can be speculatively modified that
   caption: "An possible implicit channel",
 )
 
-=== Secrets
-
 == Defending Against Attacks on Out-of-Order Processors
 
 Defending against speculative execution attacks is not so simple.
@@ -215,7 +213,6 @@ The obvious solution is to disable speculation, but this has such a large perfor
 
 Several schemes have been proposed to close Spectre attacks on certain structures within the processor.
 These different schemes use different threat models and protect different things.
-
 ==== Delay-on-Miss
 
 ==== Non-Speculative Data Access

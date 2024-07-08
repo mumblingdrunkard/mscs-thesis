@@ -1,4 +1,4 @@
-= The Berkeley Out-of-Order Machine
+= The Berkeley Out-of-Order Machine <ch:boom>
 
 The Berkeley Out-of-Order Machine (BOOM) is an open-source-software (OSS) project from the University of California, Berkeley (UC Berkeley).
 It is an implementation of a 64-bit RISC-V processor
@@ -15,6 +15,9 @@ Several instruction format variants are defined for different instruction types.
 Some instructions require no destination register, while others require immediate values encoded in the instructions.
 Instructions have a fixed size of 32 bits.
 The PC is aligned at a four-byte boundary (the lower two bits of the PC are always 0).
+
+RISC-V is a so-called register-register architecture where the only instructions that access memory are load and store instructions#footnote[... and atomic instructions which may write a value, read a value, and update a register all at once].
+Additionally, all instructions write to one architectural register or do not write a value at all.
 
 === Compressed Instructions
 
@@ -174,10 +177,13 @@ The base BOOM configuration has two issue queues.
 One for memory operations (mIQ), and a separate one for integer operations (iIQ).
 If operations on floating point numbers are supported, there is a separate queue for those too.
 
+The IQ slots hold instructions and listen for when dependencies become available.
+Once all dependencies are available, the instructions are issued to various FUs.
+
 === Address Generation Units
 
 The _address generation units_ (AGUs) are the functional units that calculate addresses for instructions that access memory.
-These units are not pipelined.
+These units are not pipelined unlike most other units in the BOOM.
 In the same cycle that the uOPs are issued, the address exits the AGU and is sent to the load-store unit.
 
 === Load-Store Unit
@@ -202,8 +208,49 @@ If virtual addressing is not enabled, the TLB simly simply passes the address th
 
 ==== Deciding Which Operations to Perform
 
+In any one cycle, the LSU must decide what action to perform.
+Possible cases the LSU has to handle are:
+- fire a store or load for an address arriving from an AGU,
+- retry a store or load whose address already arrived but failed translation by the TLB, or
+- wake up a store or load whose address already arrived and succeeded translation but was not acknowledged by the data cache.
+
+For these various signals, addresses from the AGU always have priority as the AGUs have no mechanism to apply back-pressure and stall.
+Addresses from AGUs are attempted to be translated by the TLB and the result is stored in the LDQ.
+If translation fails, the untranslated address is stored instead to be retried later.
+
+The LDQ and STQ are scanned to find entries that require waking up or retrying.
+
+==== Other Management
+
+As various operations leave the LSU and are headed for the data cache, the addresses are compared with those in the LDQ and STQ to determine whether any forwarding should happen or if any ordering violations are visible.
+
+If an outgoing load instruction is found to overlap with a store instruction in the STQ, the load is squashed and the value is forwarded from the store instruction instead.
+
 ==== Tracking Load Instructions
 
+When load instructions are sent to the data cache and are not denied, the corresponding entry is marked as "executed" in the LDQ.
+uOPs are tracked based on their LDQ index so that when responses arrive from the data cache, the relevant information for what to do next can be found partly in the LDQ.
+
+There is some latency between the uOP issuing to the cahe and the entry being marked as executed.
+This is to give the data cache time to locate the value and inform the LSU of a lack of capacity to handle a miss, called a _nack_ for "not acknowledged".
+In the meantime, a mask is set to prevent the load being selected for wakeup.
+
+If the uOP is not nack'ed, the "executed" flag is finally set and the data cache takes over.
+
+==== Responses
+
+When responses arrive for loads, they contain data that must be written back to the PRF.
+The response contains the LDQ index and the physical destination register index is stored in the LDQ.
+The LSU uses a writeback port to the PRF to write back the result.
+
+==== Speculative Load Wakeups
+
+The BOOM supports speculatively waking up dependent instructions a cycle before the values from loads are returned.
+This is done by assuming the load hits in the first-level cache and informing the IQs early.
+This allows dependent instructions to issue in the same cycle that the values are being written back to the PRF.
+
 === Data Cache
+
+The data cache of the BOOM 
 
 ==== Miss Status Holding Registers
