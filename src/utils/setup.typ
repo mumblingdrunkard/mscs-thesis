@@ -77,7 +77,7 @@
   }
 
   show heading: set par(first-line-indent: 0pt)
-  show heading: set text(weight: 550)
+  show heading: set text(weight: 700)
 
   set figure(placement: auto)
 
@@ -96,7 +96,7 @@
         numbering(it.numbering, ..counter(heading).at(it.location()))
         [ ]
       }
-      show text: underline
+      // show text: underline
       it.body
     })
   }
@@ -133,7 +133,7 @@
   show heading.where(level: 4): set heading(numbering: none)
 
   set heading(numbering: none, outlined: false)
-  include "../frontmatter/front-page.typ"
+  // include "../frontmatter/front-page.typ"
 
   set page(paper: "a4", margin: (inside: 36mm, outside: 24mm))
 
@@ -172,8 +172,8 @@
       v(1em)
     }
     outline(target: figure.where(kind: image), title: "List of Figures")
-    outline(target: figure.where(kind: raw), title: "List of Listings")
     pagebreak()
+    outline(target: figure.where(kind: raw), title: "List of Listings")
     outline(target: figure.where(kind: table), title: "List of Tables")
   }
 

@@ -58,37 +58,7 @@ The predictor is only trained on cacheable addresses to prevent sending spurious
 == Integrating the Predictor
 
 Here we describe the process of integrating the predictor into the system and sending predictions to the LSU and how they are handled from there.
-
-#figure(
-  ```monosketch
-    ┌────────────────┐  ┌───────────────────────────┐
-  ┌─▶     LDPRED     ◀──┤            IF             │
-  │ └────────▲───────┘  └────────────┬──────────────┘
-  │          │          ┌────────────▼──────────────┐
-  │       commit   ┌────┤            ID             │
-  │          │     │    └────────────┬──────────────┘
-  │ ┌────────┴─────▼─┐  ┌────────────▼──────────────┐
-  │ │                │  │            RR             │
-  │ │      ROB       │  └───┬──────────────┬────────┘
-  │ │                │  ┌───▼───┐ ┌────────▼────────┐
-  │ │                │  │  mIQ  │ │       iIQ       │
-  │ └────────┬───────┘  └───┬───┘ └───┬─────────┬───┘
-  │          ▼          ┌───▼─────────▼─────────▼───┐
-  │       commit        │            PRF            │
-  │                     └───┬─────────┬─────────┬───┘
-  │ ┌────────────────┐      ▼     ┌───▼───┐ ┌───▼───┐
-  └─▶      LSU       ◀───  AGU    │MUL/DIV│ │  ALU  │
-    └───────▲────────┘      │     ├───────┤ └───┬───┘
-            │               ▼     │MUL/DIV│     ▼    
-    ┌───────▼────────┐    to PRF  ├───────┤   to PRF 
-    │                │            │MUL/DIV│          
-    │       D$       │            └───┬───┘          
-    │                │                ▼              
-    └────────────────┘              to PRF           
-  ```,
-  kind: image,
-  caption: [Integrating the load address predictor `LDPRED` in the BOOM]
-)
+@fig:doppelganger-load-architecture is how we have implemneted it in the BOOM, but it is included in the previous chapter to illustrate concepts around how doppelgangers work.
 
 === Generating Predictions for Incoming Load Instructions
 
@@ -130,12 +100,26 @@ In the LSU, prediction PCs are compared with dispatched uOPs' PCs to verify that
 As predictions arrive and there is available capacity, the LSU will issue a doppelganger load to the data cache.
 The request is marked as such and flows almost like a normal load, except that if it misses, it is not passed to the MSHRs but is dropped instead.
 The corresponding LDQ entry is marked as executed to prevent mechanisms like wakeup or triggering extra loads when the real address arrives.
-
-In the case of dropped doppelgangers, the LSU is informed to ensure the corresponding entry is marked as such.
-Otherwise, in the case of a correct prediction, the LSU will be waiting for a response that never arrives.
+Marking entries as executed, or at least triggering the pipeline that eventually marks them as such, also triggers additional mechanisms such as checking for ordering violations and such.
 
 One important difference between doppelganger loads and normal loads is that doppelganger loads do not trigger the speculative load wakeups.
 Speculative load wakeup is on a fixed cycle offset from issuing the load to the L1d and care must be taken to ensure doppelgangers suppress this logic.
+
+=== Problems with Missing Mispredicted Doppelgangers
+
+In the case of doppelgangers that miss, the LSU is informed to ensure the corresponding entry is marked as such.
+Otherwise, in the case of a correct prediction, the LSU will be waiting for a response that never arrives.
+
+Dropping the missing doppelgangers was done to save time from working around a bothersome issue where:
++ a doppelganger was issued to the data cache,
++ the doppelganger missed and was placed in a MSHR,
++ the doppelganger used an incorrect prediction,
++ the real load hit in the cache and returned its value before the doppelganger could complete,
++ the doppelganger finally returned, extremely late with no clear indication as to whether the LDQ slot had already been re-allocated for a new load, which was predicted correct, then
++ the extremely old doppelganger propagated its value to the wrong instructions.
+
+In a proper implementation of doppelganger loads, doppelgangers should be allowed to miss in the first-level cache.
+This requires the MSHRs to be informed when a doppelganger that missed is determined to be mispredicted so that the request can be dropped or tagged so that the request can be properly ignored when returning to the LSU.
 
 === When the Real Address Arrives
 
@@ -162,7 +146,7 @@ Normal responses from the L1d are sent straight to the PRF as they are already b
 Doppelganger loads require holding off dependent instructions until the address is confirmed.
 
 Because of time constraints, we have not implemented the logic to hold values in the PRF until they are ready.
-Instead, the values are held in the LDQ until the address is confirmed.
+Instead, the values are held in the LDQ until the address is confirmed and the writebacks are scheduled.
 
 === Sending Responses to the Physical Register File
 
@@ -172,3 +156,4 @@ As confirmed doppelgangers and real loads have to share the same writeback ports
 A priority mux detects confirmed, unsent doppelgangers and writes back the values when no other instructions require the ports.
 Lower absolute indices in the LDQ are given priority.
 A slightly more optimal strategy would be to prioritise from the head of the LDQ which is implemented as a circular buffer, ensuring that the oldest confirmed doppelgangers are sent to the PRF as soon as possible.
+As this is not intended to be part of the completed solution, we choose this method of writebacks as an acceptable compromise for the time constraints.

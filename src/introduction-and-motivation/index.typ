@@ -22,6 +22,7 @@ By using knowledge about the microarchitecture and code running on the processor
 
 The mechanisms of microarchitectural state combined with ways to inspect it forms a _side-channel_ that potentially leaks sensitive information during execution which malicious applications can observe.
 Exploiting these mechanisms gives rise to a side-channel attack.
+Side-channel attacks have been known for decades and various programming techniques make good efforts to work around them when it is needed.
 
 On in-order processors, where instructions are executed in order and instructions after a branch are not allowed to change microarchitectural state until the branch is resolved, programmers have some control over what is leaked through a side-channel.
 In out-of-order systems, this control is gone and applications are at the mercy of the branch predictor if the program contains leaky paths of execution that should not be entered.
@@ -41,7 +42,8 @@ These approaches only seek to make execution appear similar to in-order executio
 This is generally regarded as an acceptable solution.
 
 Developing a mitigation starts with analysing the problem space by determining which values are potentially secret and where they are located.
-Generally, secrets are considered to reside either in both registers and in memory, or just in memory.
+Generally, secrets are considered to reside either in both registers and in memory, or only in memory.
+
 Said in a different way: all values in memory are potentially secret and must be protected.
 Some models consider values that are already loaded from memory (and thus are placed in registers) to still be secrets, others do not.
 

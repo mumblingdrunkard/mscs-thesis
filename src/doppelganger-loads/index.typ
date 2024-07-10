@@ -26,6 +26,10 @@ Because it is only trained on committed loads, speculative cache accesses using 
 There are some extra edge-cases that have to be handled carefully depending on the underlying secure speculation scheme but the approach is generally safe.
 
 Accesses based on these predictions are dubbed _doppelgangers_ or _doppelganger loads_ and stand in for a load to the real address until the real address is calculated.
+When the address is correctly predicted, the value can propagate as soon as the underlying secure speculation scheme allows it.
+This is a big improvement when the cache access latency is high.
+
+With relation to prediction- and resolution-based implicit channels, doppelgangers are safe as they are only trained on non-speculative data, and the values returned by doppelgangers are not propagated until the underlying scheme allows it.
 
 == Doppelganger Loads Architecture
 
@@ -33,30 +37,30 @@ Doppelganger loads are proposed to be implemented with an architecture that rese
 
 #figure(
   ```
-    ┌────────────────┐  ┌───────────────────────────┐
-  ┌─▶     LDPRED     ◀──┤            IF             │
-  │ └────────▲───────┘  └────────────┬──────────────┘
-  │          │          ┌────────────▼──────────────┐
-  │       commit   ┌────┤            ID             │
-  │          │     │    └────────────┬──────────────┘
-  │ ┌────────┴─────▼─┐  ┌────────────▼──────────────┐
-  │ │                │  │            RR             │
-  │ │      ROB       │  └───┬──────────────┬────────┘
-  │ │                │  ┌───▼───┐ ┌────────▼────────┐
-  │ │                │  │  mIQ  │ │       iIQ       │
-  │ └────────┬───────┘  └───┬───┘ └───┬─────────┬───┘
-  │          ▼          ┌───▼─────────▼─────────▼───┐
-  │       commit  ┌─────▶            PRF            │
-  │               │     └───┬─────────┬─────────┬───┘
-  │ ┌─────────────┴──┐      ▼     ┌───▼───┐ ┌───▼───┐
-  │ │      LSU    ▲  │┌──  AGU    │MUL/DIV│ │  ALU  │
-  │ │             │  ││           ├───────┤ └───┬───┘
-  │ │ LDQ ┌──────▶┴┐ ││           │MUL/DIV│     ▼    
-  └─▶ ADDR│DG?┐  │=│ ◀┘           ├───────┤   to PRF 
-    │ ├───┼───┤  └─┘ │            │MUL/DIV│          
-    │ ├───┼───┤      │            └───┬───┘          
-    │ ├───┼───┤      │                ▼              
-    │ └───┴───┘      │              to PRF           
+    ╔════════════════╗  ┌───────────────────────────┐
+  ╔═▶     LDPRED     ◀──┤            IF             │
+  ║ ╚════════▲═══════╝  └────────────┬──────────────┘
+  ║          ║          ┌────────────▼──────────────┐
+  ║       commit   ┌────┤            ID             │
+  ║          ║     │    └────────────┬──────────────┘
+  ║ ┌────────╨─────▼─┐  ┌────────────▼──────────────┐
+  ║ │                │  │            RR             │
+  ║ │      ROB       │  └───┬──────────────┬────────┘
+  ║ │                │  ┌───▼───┐ ┌────────▼────────┐
+  ║ │                │  │  mIQ  │ │       iIQ       │
+  ║ └────────┬───────┘  └───┬───┘ └───┬─────────┬───┘
+  ║          ▼          ┌───▼─────────▼─────────▼───┐
+  ║       commit  ┌─────▶            PRF            │
+  ║               │     └───┬─────────┬─────────┬───┘
+  ║ ┌─────────────┴──┐      ▼     ┌───▼───┐ ┌───▼───┐
+  ║ │      LSU    ▲  │┌──  AGU    │MUL/DIV│ │  ALU  │
+  ║ │             ║  ││           ├───────┤ └───┬───┘
+  ║ │ LDQ ╔══════▶╩╗ ││           │MUL/DIV│     ▼    
+  ╚═▶ ADDR║DG?╗  ║=║ ◀┘           ├───────┤   to PRF 
+    │ ├───┤╔══╣  ╚═╝ │            │MUL/DIV│          
+    │ ├───┤╠══╣      │            └───┬───┘          
+    │ ├───┤╠══╣      │                ▼              
+    │ └───┘╚══╝      │              to PRF           
     └───────▲────────┘                               
             │                                        
     ┌───────▼────────┐                               
@@ -66,7 +70,7 @@ Doppelganger loads are proposed to be implemented with an architecture that rese
     └────────────────┘                               
   ```,
   kind: image,
-  caption: "Doppelganger load architecture",
+  caption: "Doppelganger load architecture (changes to underlying architecture are highlighted with double borders)",
 ) <fig:doppelganger-load-architecture>
 
 An address predictor `LDPRED` makes predictions for incoming instructions and sends those predictions to the LSU.
@@ -82,14 +86,44 @@ The real address replaces the predicted address in the LDQ so that on commit, th
 == Special Considerations for Doppelganger Loads
 
 There are some special cases to take into account when implementing doppelganger loads that are outlined in the paper @bib:doppelganger.
+Doppelganger predictions being made and then made not visible may reveal information about other microarchitectural state and form an implicit channel.
 
-=== Ordering
+=== Ordering and Store-to-Load Forwarding
 
-=== Store-to-Load Forwarding
+Doppelganger loads being squashed because of ordering violations reveals the fact that the address matches a different memory access.
+The same goes for store-to-load forwarding which would reveal a match in the STQ.
+Because of this, properly implemented doppelganger loads should complete independently of such mechanisms and instead be ignored once the access is complete.
 
 === Special Considerations for Delay-on-Miss
 
+DoM provides register protection and uses a different philosophy for protecting secrets than the other two schemes.
+The authors behind doppelganger loads show some special cases where the guarantees of DoM would be broken by doppelganger loads.
+
+The first case is:
++ during a misprediction, load a secret value with a hit in the L1, allowed by DoM,
++ a branch depending on the secret value performs different loads depending on the value,
++ the predictions generated for doppelganger loads in either case miss in the L1.
+
+If the second branch depending on the secret value can resolve before the mispredicted branch, the issued doppelganger may reveal the speculatively loaded secret.
+The second case is similar, but the secret is loaded before the misprediction.
+
+This happens because DoM does not track dependent instructions and instead makes all loads wait until they are non-speculative to update microarchitectural state.
+Because doppelgangers do potentially update microarchitectural state, they can break the guarantees of DoM when a branch forms an implicit channel such as described above.
+
+The solution to this is to block these various implicit channels.
+By resolving all branches in order, the only thing that can be revealed by doppelgangers after the second branch is the branch prediction as it is not allowed to resolve and depend on the secret before the misspeculation is detected and squashed.
+For this, it is also required that the branch predictor is not trained speculatively.
+
+Doppelgangers can also form an implicit channel, which is blocked by only propagating values from doppelgangers once the accompanying load is determined to be non-speculative.
+That is, if the doppelganger misses, but the prediction is correct, the value is only propagated once the associated load becomes non-speculative.
+If a doppelganger hits and is correct, the value is allowed to propagate while the load is still speculative.
+
+Similarly, values forwarded from stores are not forwarded until they would be visible by DoM.
+
 == Doppelganger Loads Performance
+
+Doppelganger loads, when implemented in a simulator showed little performance gain over an insecure baseline processor.
+However, when combined with secure speculation schemes such as NDA-P, STT, or DoM, doppelganger loads were able to recover as much as half of the performance lost under the various schemes.
 
 == The Cost of Doppelganger Loads
 

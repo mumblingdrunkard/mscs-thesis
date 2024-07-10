@@ -187,3 +187,5 @@ When branch predictors fail to make predictions using advanced algorithms, they 
 
 Whether branch predictors can be "timely" in the same manner is perhaps up for debate.
 When fetching multiple instructions per cycle, a branch prediction can be "late" without affecting performance as long as the processor is not completing instrucitons faster than they can be fetched.
+In fact, processors will commonly have several branch predictors where a fast predictor redirects instruction fetch quickly.
+If a more accurate but slower predictor later disagrees with the prediction, instruction fetch is redirected to use the higher accuraly prediction.

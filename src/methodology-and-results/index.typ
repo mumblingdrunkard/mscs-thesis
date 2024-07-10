@@ -63,24 +63,26 @@ Other interesting metrics would be power consumption and similar performance per
 When load address prediction is enabled, the results printed to the output by the programs themselves are mangled as shown in @lst:mangled-output.
 
 #figure(kind: raw,  {
-show raw: set text(size: 7pt)
-grid(columns: (auto, ) * 2, inset: 5pt, [
-  ```
-  Microseconds for one run through Dhrystone: 229
-  Dhrystones per Second:                      4347
-  mcycle = 115126
-  minstret = 196029
-  ```
-],
-grid.vline(),
-[
-  ```
-  Microseconds for one run through Dhrystone: 229
-  Drystones per Second:                      6
-  mcycle = 1146
-  istret = 02
-  ```
-])}, caption: "Normal output without address prediction disabled (left) and mangled output with address prediction enabled (right)") <lst:mangled-output>
+  show raw: set text(size: 7pt)
+  grid(columns: (auto, ) * 2, inset: 5pt, [
+    ```
+    Microseconds for one run through Dhrystone: 229
+    Dhrystones per Second:                      4347
+    mcycle = 115126
+    minstret = 196029
+    ```
+  ],
+  grid.vline(),
+  [
+    ```
+    Microseconds for one run through Dhrystone: 229
+    Drystones per Second:                      6
+    mcycle = 1146
+    istret = 02
+    ```
+  ])}, 
+  caption: "Normal output without address prediction disabled (left) and mangled output with address prediction enabled (right)"
+) <lst:mangled-output>
 
 Most of the benchmarks only print the `mcycle = ...` and `minstret = ...` parts, but the Dhrystone benchmark prints a little extra information.
 What is most curious about this is that the results seem to be consistent up to some point, but then start to fall apart.
@@ -154,6 +156,7 @@ Column *base-no-spec-ld* is our baseline that we want to beat,
 
 #figure(
   caption: "SmallBoomConfig IPC results with different configurations",
+  placement: none,
   table(columns: (auto, ) * 5,
     [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
     ..smallboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
@@ -168,6 +171,7 @@ Column *base-no-spec-ld* is our baseline that we want to beat,
 
 #figure(
   caption: "SmallBoomConfig IPC results with different configurations as relative to the baseline without speculative load wakeups, expressed as a percentage",
+  placement: none,
   table(columns: (auto, ) * 5,
     [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
     ..smallboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
@@ -186,6 +190,7 @@ Similarly, @tab:mediumboom-ipc and @tab:mediumboom-ipc-relative contain the abso
 
 #figure(
   caption: "MediumBoomConfig IPC results with different configurations",
+  placement: none,
   table(columns: (auto, ) * 5,
     [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
     ..mediumboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
@@ -200,6 +205,7 @@ Similarly, @tab:mediumboom-ipc and @tab:mediumboom-ipc-relative contain the abso
 
 #figure(
   caption: "MediumBoomConfig IPC results with different configurations as relative to the baseline without speculative load wakeups, expressed as a percentage",
+  placement: none,
   table(columns: (auto, ) * 5,
     [*Test*], [*base-no-spec-ld*], [*base*], [*ldpred-no-spec-ld*], [*ldpred*],
     ..mediumboom.map(((name, base-no, base, ldpred-no, ldpred)) => {
@@ -240,6 +246,7 @@ Predictions made for uncommitted loads are not counted.
 
 #figure(
   caption: "SmallBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, calculated per application",
+  placement: none,
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
@@ -249,6 +256,7 @@ Predictions made for uncommitted loads are not counted.
 
 #figure(
   caption: "SmallBoomConfig total loads and number of fired predictions scaled to different quantities",
+  placement: none,
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired/N Loads*], [*Correct Fired/Fired*], [*Total Pred./N Loads*], [*Total Correct Pred./Total Pred*],
@@ -268,6 +276,7 @@ Predictions made for uncommitted loads are not counted.
 
 #figure(
   caption: "MediumBoomConfig total loads, number of fired predictions, number of fired correct predictions, total number of predictions, and total number of correct predictions, calculated per application",
+  placement: none,
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired*], [*Correct Fired*], [*Total Pred.*], [*Total Correct Pred.*],
@@ -277,6 +286,7 @@ Predictions made for uncommitted loads are not counted.
 
 #figure(
   caption: "MediumBoomConfig total loads and number of fired predictions scaled to different quantities",
+  placement: none,
   table(
     columns: (auto, ) * 6,
     [*Test*], [*N Loads*], [*Fired/N Loads*], [*Correct Fired/Fired*], [*Total Pred./N Loads*], [*Total Correct Pred./Total Pred*],

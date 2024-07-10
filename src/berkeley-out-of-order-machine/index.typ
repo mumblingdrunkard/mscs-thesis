@@ -220,6 +220,11 @@ If translation fails, the untranslated address is stored instead to be retried l
 
 The LDQ and STQ are scanned to find entries that require waking up or retrying.
 
+The LSU code contains a method to generate code that prioritises different signals depending on their resource needs.
+The LSU can schedule multiple operations if their resource needs do not overlap.
+For example: a load in need of retrying the address translation could be translated at the same time as a load with an already translated address is woken up.
+This interaction in particular is not handled, but is a good example of how the LSU scheduling might work when resource needs are separate.
+
 ==== Other Management
 
 As various operations leave the LSU and are headed for the data cache, the addresses are compared with those in the LDQ and STQ to determine whether any forwarding should happen or if any ordering violations are visible.
@@ -251,6 +256,12 @@ This allows dependent instructions to issue in the same cycle that the values ar
 
 === Data Cache
 
-The data cache of the BOOM 
+The data cache of the BOOM is slightly underdocumented at the time.
+The documentation that exists is for an old version of the cache where the implementation was intended for an in-order processor and a shim was in charge of handling the out-of-order requests.
+
+The current implementation is a more classic out-of-order cache with hit-under-miss and other optimisations.
 
 ==== Miss Status Holding Registers
+
+The _miss status holding registers_ (MSHRs) hold the operations that missed in the first-level cache and wait for responses from lower levels.
+These are a finite resource and if an operation misses while the MSHRs are full, it causes the operation to be nack'ed, requiring the LSU to replay the request later on.
